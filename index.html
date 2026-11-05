@@ -178,6 +178,7 @@
       transition: all 0.18s ease;
       box-sizing: border-box;
       padding: 0 1.5rem;
+      user-select: none;
     }
 
     .btn-brand-primary-wide:active {
@@ -191,13 +192,30 @@
       justify-content: space-between;
     }
 
-    /* Minimal SVG icon utility */
-    .icon-svg {
-      width: 18px;
-      height: 18px;
-      display: inline-block;
-      vertical-align: middle;
-      fill: currentColor;
+    /* Toast Notification for Instant Feedback */
+    .action-toast {
+      position: absolute;
+      bottom: calc(75px + var(--safe-bottom));
+      left: 50%;
+      transform: translateX(-50%) translateY(30px);
+      background: rgba(30, 43, 34, 0.95);
+      backdrop-filter: blur(12px);
+      color: #FFFFFF;
+      padding: 0.55rem 1.15rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 9999;
+      white-space: nowrap;
+    }
+
+    .action-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
     }
 
     /* =========================================================================
@@ -386,6 +404,11 @@
       gap: 0.45rem;
       cursor: pointer;
       backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+
+    .home-location-pill:active {
+      background: rgba(255, 255, 255, 0.2);
     }
 
     .home-top-icons {
@@ -406,6 +429,11 @@
       color: #EFECE6;
       cursor: pointer;
       font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .icon-circle-btn:active {
+      background: rgba(255, 255, 255, 0.25);
     }
 
     /* Realtime Multi-Device Cloud Sync Banner */
@@ -455,6 +483,11 @@
       margin-top: 0.85rem;
       cursor: pointer;
       border-left: 4px solid var(--terracotta);
+      transition: transform 0.15s;
+    }
+
+    .home-tracker-floating-pill:active {
+      transform: scale(0.98);
     }
 
     /* Stories Row */
@@ -476,6 +509,11 @@
       cursor: pointer;
       flex-shrink: 0;
       width: 66px;
+      transition: transform 0.2s;
+    }
+
+    .story-item:active {
+      transform: scale(0.95);
     }
 
     .story-ring-border {
@@ -509,7 +547,7 @@
       line-height: 1.15;
     }
 
-    /* Real Value Card (Replaces fake points) */
+    /* Real Value Card */
     .direct-order-banner {
       margin: 0.85rem 1.25rem;
       background: #FFFFFF;
@@ -630,11 +668,13 @@
       align-items: center;
       gap: 0.95rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: transform 0.18s, border-color 0.18s;
+      user-select: none;
     }
 
     .dish-card-item:active {
       transform: scale(0.98);
+      border-color: var(--forest-dark);
     }
 
     .dish-thumb-box {
@@ -706,16 +746,23 @@
     }
 
     .dish-plus-circle {
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       background: var(--forest-soft);
       color: var(--forest-dark);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: 700;
+      transition: all 0.15s;
+    }
+
+    .dish-card-item:hover .dish-plus-circle,
+    .dish-plus-circle:active {
+      background: var(--forest-dark);
+      color: #EFECE6;
     }
 
     /* =========================================================================
@@ -749,6 +796,11 @@
       font-weight: 600;
       width: 65px;
       transition: all 0.2s;
+      user-select: none;
+    }
+
+    .tab-bar-btn:active {
+      transform: scale(0.92);
     }
 
     .tab-bar-btn.active {
@@ -783,9 +835,10 @@
       color: #fff;
       font-size: 0.6rem;
       font-weight: 800;
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: var(--radius-pill);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -821,6 +874,11 @@
       box-shadow: var(--shadow-sm);
       font-size: 1.1rem;
       line-height: 1;
+      transition: background 0.15s;
+    }
+
+    .circle-back-btn:active {
+      background: var(--sand-subtle);
     }
 
     .customizer-photo-banner {
@@ -912,6 +970,11 @@
       justify-content: space-between;
       cursor: pointer;
       transition: all 0.15s;
+      user-select: none;
+    }
+
+    .option-select-row:active {
+      transform: scale(0.99);
     }
 
     .option-select-row.selected {
@@ -983,6 +1046,11 @@
       justify-content: center;
       cursor: pointer;
       box-shadow: var(--shadow-sm);
+      transition: background 0.15s;
+    }
+
+    .stepper-mini-btn:active {
+      background: #EDE8DE;
     }
 
     /* =========================================================================
@@ -996,19 +1064,20 @@
     }
 
     .cart-item-card-row {
-      margin: 0.85rem 1.25rem;
+      margin: 0.65rem 1.25rem;
       background: #FFFFFF;
       border-radius: 18px;
-      padding: 1rem;
+      padding: 0.95rem;
       border: 1px solid var(--border-subtle);
       box-shadow: var(--shadow-sm);
       display: flex;
       gap: 0.85rem;
+      align-items: center;
     }
 
     .cart-item-thumb {
-      width: 74px;
-      height: 74px;
+      width: 64px;
+      height: 64px;
       border-radius: 12px;
       overflow: hidden;
       flex-shrink: 0;
@@ -1059,9 +1128,16 @@
       color: var(--forest-dark);
       font-size: 0.68rem;
       font-weight: 800;
-      padding: 0.3rem 0.75rem;
+      padding: 0.35rem 0.75rem;
       border-radius: var(--radius-pill);
       cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-add-upsell-pill:active {
+      transform: scale(0.95);
+      background: var(--forest-dark);
+      color: #FFF;
     }
 
     .payment-cards-grid {
@@ -1080,6 +1156,11 @@
       flex-direction: column;
       gap: 0.35rem;
       cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .payment-option-card:active {
+      transform: scale(0.98);
     }
 
     .payment-option-card.selected {
@@ -1176,6 +1257,7 @@
       cursor: pointer;
       box-shadow: var(--shadow-sm);
       transition: all 0.2s;
+      user-select: none;
     }
 
     .pickup-card-btn:active {
@@ -1312,7 +1394,7 @@
       box-shadow: 0 0 0 3px #FFFFFF, 0 0 0 6px rgba(211, 107, 75, 0.25);
     }
 
-    /* Store Selector Modal */
+    /* Modals (Drawer style) */
     .modal-backdrop-sheet {
       position: absolute;
       inset: 0;
@@ -1394,9 +1476,12 @@
             <span>ATOYAC Cocina</span>
             <span style="font-size: 0.7rem; color: #888;">Ahora</span>
           </div>
-          <div style="font-size: 0.75rem; color: #444; margin-top: 2px;">¡Pedido <strong>#200</strong> confirmado! Tu comanda se está preparando.</div>
+          <div style="font-size: 0.75rem; color: #444; margin-top: 2px;" id="pushToastMessage">¡Pedido <strong>#200</strong> confirmado! Tu comanda se está preparando.</div>
         </div>
       </div>
+
+      <!-- FLOATING ACTION TOAST -->
+      <div class="action-toast" id="actionToast">✓ Agregado al pedido</div>
 
       <!-- =====================================================================
            APP SCREENS STACK
@@ -1410,7 +1495,7 @@
           
           <div class="home-hero-banner">
             <div class="home-top-bar">
-              <button class="home-location-pill" id="btnOpenStoreModal">
+              <button class="home-location-pill" id="btnOpenStoreModal" title="Cambiar cocina o sucursal">
                 <span>📍</span>
                 <span>Popocatépetl 289 · Abierto</span>
                 <span style="font-size: 0.65rem;">▼</span>
@@ -1447,7 +1532,7 @@
 
           <!-- Stories Row (Real Categories) -->
           <div class="stories-carousel-row">
-            <div class="story-item" id="storyItemCombo">
+            <div class="story-item" data-filter="combos">
               <div class="story-ring-border">
                 <div class="story-img-wrap">
                   <img src="assets/img/dishes/baguettes.jpg" alt="Combos">
@@ -1510,9 +1595,9 @@
           </div>
 
           <!-- Category Header -->
-          <div class="section-label-bar">
+          <div class="section-label-bar" id="menuAnchorSection">
             <h2 class="section-title-text">Menú del Día</h2>
-            <span style="font-size: 0.75rem; font-weight: 700; color: var(--terracotta); cursor: pointer;" id="btnViewAllDishes">Todos</span>
+            <span style="font-size: 0.75rem; font-weight: 700; color: var(--terracotta); cursor: pointer;" id="btnViewAllDishes">Ver Todos</span>
           </div>
 
           <!-- Category Chips -->
@@ -1528,8 +1613,8 @@
           <!-- Products List (100% Real ATOYAC Dishes) -->
           <div class="products-list-col">
             
-            <!-- Dish 1: Combo Mediodía (Star Combo) -->
-            <div class="dish-card-item" id="dishCardFeaturedCombo" data-category="combos">
+            <!-- Dish 1: Combo Mediodía (Opens Customizer) -->
+            <div class="dish-card-item" data-id="combo-mediodia" data-name="Combo Mediodía" data-price="109" data-img="assets/img/dishes/baguettes.jpg" data-category="combos" data-is-combo="true">
               <div class="dish-thumb-box">
                 <img src="assets/img/dishes/baguettes.jpg" alt="Combo Mediodía">
                 <span class="dish-badge-overlay">Combo</span>
@@ -1539,13 +1624,13 @@
                 <div class="dish-description-sub">Cualquier baguette artesanal (25 cm) a elegir + Agua fresca natural del día de 500 ml.</div>
                 <div class="dish-action-row">
                   <div class="dish-price-text">$109 MXN</div>
-                  <div class="dish-plus-circle">+</div>
+                  <div class="dish-plus-circle" title="Personalizar Combo">+</div>
                 </div>
               </div>
             </div>
 
             <!-- Dish 2: Combo Amanecer Atoyac -->
-            <div class="dish-card-item" data-category="combos">
+            <div class="dish-card-item" data-id="combo-amanecer-atoyac" data-name="Combo Amanecer Atoyac" data-price="94" data-img="assets/img/dishes/sandwiches.jpg" data-category="combos" data-desc="Sándwich Atoyac con aguacate + Jugo Naranja 500ml">
               <div class="dish-thumb-box">
                 <img src="assets/img/dishes/sandwiches.jpg" alt="Combo Amanecer Atoyac">
                 <span class="dish-badge-overlay">Amanecer</span>
@@ -1555,13 +1640,13 @@
                 <div class="dish-description-sub">Sándwich Atoyac con aguacate, pavo y espinaca + Jugo de naranja 100% natural 500 ml.</div>
                 <div class="dish-action-row">
                   <div class="dish-price-text">$94 MXN</div>
-                  <div class="dish-plus-circle">+</div>
+                  <div class="dish-plus-circle" title="Agregar al Pedido">+</div>
                 </div>
               </div>
             </div>
 
             <!-- Dish 3: Baguette de Pechuga -->
-            <div class="dish-card-item" data-category="mediodia">
+            <div class="dish-card-item" data-id="bag-pechuga" data-name="Baguette de Pechuga" data-price="89" data-img="assets/img/dishes/baguettes.jpg" data-category="mediodia" data-desc="100g pechuga a la plancha, panela, espinaca y jitomate (25cm)">
               <div class="dish-thumb-box">
                 <img src="assets/img/dishes/baguettes.jpg" alt="Baguette de Pechuga">
                 <span class="dish-badge-overlay">25 cm</span>
@@ -1571,13 +1656,13 @@
                 <div class="dish-description-sub">100g de pechuga a la plancha, queso panela fresco, espinaca y jitomate en pan crujiente.</div>
                 <div class="dish-action-row">
                   <div class="dish-price-text">$89 MXN</div>
-                  <div class="dish-plus-circle">+</div>
+                  <div class="dish-plus-circle" title="Agregar al Pedido">+</div>
                 </div>
               </div>
             </div>
 
             <!-- Dish 4: Baguette de Milanesa -->
-            <div class="dish-card-item" data-category="mediodia">
+            <div class="dish-card-item" data-id="bag-milanesa" data-name="Baguette de Milanesa de Pollo" data-price="95" data-img="assets/img/dishes/baguettes.jpg" data-category="mediodia" data-desc="110g milanesa de pollo dorada, panela y lechuga (25cm)">
               <div class="dish-thumb-box">
                 <img src="assets/img/dishes/baguettes.jpg" alt="Baguette de Milanesa">
               </div>
@@ -1586,13 +1671,13 @@
                 <div class="dish-description-sub">110g de milanesa de pollo dorada, queso panela, lechuga fresca y jitomate en baguette de 25 cm.</div>
                 <div class="dish-action-row">
                   <div class="dish-price-text">$95 MXN</div>
-                  <div class="dish-plus-circle">+</div>
+                  <div class="dish-plus-circle" title="Agregar al Pedido">+</div>
                 </div>
               </div>
             </div>
 
             <!-- Dish 5: Sándwich Clásico -->
-            <div class="dish-card-item" data-category="amanecer">
+            <div class="dish-card-item" data-id="sand-clasico" data-name="Sándwich Clásico" data-price="49" data-img="assets/img/dishes/sandwiches.jpg" data-category="amanecer" data-desc="Jamón de pavo y panela fresco en pan integral artesanal">
               <div class="dish-thumb-box">
                 <img src="assets/img/dishes/sandwiches.jpg" alt="Sándwich Clásico">
               </div>
@@ -1601,13 +1686,13 @@
                 <div class="dish-description-sub">Jamón de pavo y queso panela fresco en pan integral artesanal.</div>
                 <div class="dish-action-row">
                   <div class="dish-price-text">$49 MXN</div>
-                  <div class="dish-plus-circle">+</div>
+                  <div class="dish-plus-circle" title="Agregar al Pedido">+</div>
                 </div>
               </div>
             </div>
 
             <!-- Dish 6: Crepa Nutella con Plátano -->
-            <div class="dish-card-item" data-category="tarde">
+            <div class="dish-card-item" data-id="crepa-nutella" data-name="Crepa Nutella con Plátano" data-price="75" data-img="assets/img/dishes/crepes.jpg" data-category="tarde" data-desc="Crepa recién hecha con Nutella cremosa y plátano fresco">
               <div class="dish-thumb-box">
                 <img src="assets/img/dishes/crepes.jpg" alt="Crepa Nutella con Plátano">
               </div>
@@ -1616,13 +1701,13 @@
                 <div class="dish-description-sub">Crepa recién hecha con Nutella cremosa y rebanadas de plátano fresco.</div>
                 <div class="dish-action-row">
                   <div class="dish-price-text">$75 MXN</div>
-                  <div class="dish-plus-circle">+</div>
+                  <div class="dish-plus-circle" title="Agregar al Pedido">+</div>
                 </div>
               </div>
             </div>
 
             <!-- Dish 7: Crepa Salada Atoyac -->
-            <div class="dish-card-item" data-category="tarde">
+            <div class="dish-card-item" data-id="crepa-salada" data-name="Crepa Salada Atoyac" data-price="79" data-img="assets/img/dishes/crepes.jpg" data-category="tarde" data-desc="Pechuga de pavo/pollo, queso panela fundido y espinaca">
               <div class="dish-thumb-box">
                 <img src="assets/img/dishes/crepes.jpg" alt="Crepa Salada Atoyac">
               </div>
@@ -1631,13 +1716,13 @@
                 <div class="dish-description-sub">Pechuga de pavo/pollo, queso panela fundido y hojas de espinaca fresca.</div>
                 <div class="dish-action-row">
                   <div class="dish-price-text">$79 MXN</div>
-                  <div class="dish-plus-circle">+</div>
+                  <div class="dish-plus-circle" title="Agregar al Pedido">+</div>
                 </div>
               </div>
             </div>
 
             <!-- Dish 8: Jugo Verde Natural -->
-            <div class="dish-card-item" data-category="bebidas">
+            <div class="dish-card-item" data-id="jugo-verde" data-name="Jugo Verde Natural 500 ml" data-price="45" data-img="assets/img/dishes/drinks.jpg" data-category="bebidas" data-desc="Naranja recién exprimida, espinaca, pepino y limón">
               <div class="dish-thumb-box">
                 <img src="assets/img/dishes/drinks.jpg" alt="Jugo Verde">
               </div>
@@ -1646,13 +1731,13 @@
                 <div class="dish-description-sub">Naranja recién exprimida, espinaca fresca, pepino y toque de limón sin azúcar añadida.</div>
                 <div class="dish-action-row">
                   <div class="dish-price-text">$45 MXN</div>
-                  <div class="dish-plus-circle">+</div>
+                  <div class="dish-plus-circle" title="Agregar al Pedido">+</div>
                 </div>
               </div>
             </div>
 
             <!-- Dish 9: Café Americano -->
-            <div class="dish-card-item" data-category="bebidas">
+            <div class="dish-card-item" data-id="cafe-americano" data-name="Café Americano de Grano" data-price="25" data-img="assets/img/dishes/drinks.jpg" data-category="bebidas" data-desc="Café de grano mexicano recién hecho en vaso 12 oz">
               <div class="dish-thumb-box">
                 <img src="assets/img/dishes/drinks.jpg" alt="Café Americano">
               </div>
@@ -1661,7 +1746,7 @@
                 <div class="dish-description-sub">Café de grano mexicano recién hecho cada 2 horas en vaso térmico de 12 oz.</div>
                 <div class="dish-action-row">
                   <div class="dish-price-text">$25 MXN</div>
-                  <div class="dish-plus-circle">+</div>
+                  <div class="dish-plus-circle" title="Agregar al Pedido">+</div>
                 </div>
               </div>
             </div>
@@ -1675,7 +1760,7 @@
         <section class="app-screen" id="screen-customizer">
           
           <div class="customizer-header-nav">
-            <button class="circle-back-btn" id="btnBackFromCustomizer">←</button>
+            <button class="circle-back-btn" id="btnBackFromCustomizer" title="Volver al menú">←</button>
             <span style="font-size: 0.82rem; font-weight: 800; color: var(--forest-dark); text-transform: uppercase;">Personalizar Combo</span>
             <div style="width: 36px;"></div>
           </div>
@@ -1702,7 +1787,7 @@
               <span class="badge-mandatory">Obligatorio</span>
             </div>
 
-            <div class="option-select-row selected" data-group="baguette" data-name="Baguette de Pechuga" data-extra="0">
+            <div class="option-select-row selected" data-group="baguette" data-name="Baguette de Pechuga a la Plancha" data-extra="0">
               <div>
                 <div style="font-size: 0.82rem; font-weight: 700; color: var(--forest-dark);">Baguette de Pechuga a la Plancha</div>
                 <div style="font-size: 0.7rem; color: var(--text-muted);">100g de pechuga, queso panela, espinaca y jitomate</div>
@@ -1782,7 +1867,7 @@
               <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">Opcional</span>
             </div>
 
-            <div class="option-select-row" id="optExtraAvocado" data-group="extra" data-extra="15">
+            <div class="option-select-row" id="optExtraAvocado" data-group="extra" data-name="Aguacate extra fresco" data-extra="15">
               <div>
                 <div style="font-size: 0.82rem; font-weight: 700; color: var(--forest-dark);">Aguacate extra fresco (40g)</div>
                 <div style="font-size: 0.7rem; color: var(--text-muted);">Aguacate Hass recién rebanado</div>
@@ -1790,7 +1875,7 @@
               <span style="font-size: 0.78rem; font-weight: 800; color: var(--terracotta);">+ $15</span>
             </div>
 
-            <div class="option-select-row" id="optExtraProtein" data-group="extra" data-extra="20">
+            <div class="option-select-row" id="optExtraProtein" data-group="extra" data-name="Doble proteína a la plancha" data-extra="20">
               <div>
                 <div style="font-size: 0.82rem; font-weight: 700; color: var(--forest-dark);">Doble proteína a la plancha</div>
                 <div style="font-size: 0.7rem; color: var(--text-muted);">Porción extra de pechuga o milanesa</div>
@@ -1802,9 +1887,9 @@
           <!-- Bottom Floating Bar -->
           <div class="sticky-action-bar">
             <div class="stepper-quantity-box">
-              <button class="stepper-mini-btn" id="btnQtyMinus">−</button>
+              <button class="stepper-mini-btn" id="btnQtyMinus" title="Disminuir">−</button>
               <span style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.95rem; min-width: 14px; text-align: center;" id="qtyVal">1</span>
-              <button class="stepper-mini-btn" id="btnQtyPlus">+</button>
+              <button class="stepper-mini-btn" id="btnQtyPlus" title="Aumentar">+</button>
             </div>
 
             <button class="btn-brand-primary-wide" id="btnAddToCart">
@@ -1820,28 +1905,14 @@
         <section class="app-screen" id="screen-cart">
           
           <div class="cart-view-header">
-            <button class="circle-back-btn" id="btnBackFromCart">←</button>
+            <button class="circle-back-btn" id="btnBackFromCart" title="Volver al menú">←</button>
             <h1 style="font-family: 'Outfit', sans-serif; font-size: 1.45rem; font-weight: 800; color: var(--forest-dark);">Mi Pedido</h1>
             <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;" id="cartItemCounterText">1 producto</span>
           </div>
 
-          <!-- Cart Main Item Card -->
-          <div class="cart-item-card-row">
-            <div class="cart-item-thumb">
-              <img src="assets/img/dishes/baguettes.jpg" alt="Combo Mediodía">
-            </div>
-            <div style="flex: 1;">
-              <div style="font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--forest-dark); margin-bottom: 0.2rem;">Combo Mediodía</div>
-              <div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 0.45rem;" id="cartItemSpecsText">
-                • Baguette de Pechuga a la plancha (25 cm)<br>
-                • Agua Fresca de Jamaica (500 ml)<br>
-                • Preparado al momento
-              </div>
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <div style="font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 800; color: var(--forest-dark);" id="cartItemPriceText">$109</div>
-                <span style="font-size: 0.75rem; color: var(--terracotta); font-weight: 700; cursor: pointer;" id="btnEditCartItem">Editar</span>
-              </div>
-            </div>
+          <!-- Dynamic Cart Items List Container -->
+          <div id="cartItemsContainer">
+            <!-- Rendered dynamically -->
           </div>
 
           <!-- Upselling Carousel (Real ATOYAC Products) -->
@@ -1855,21 +1926,21 @@
                 <img src="assets/img/dishes/drinks.jpg" alt="Café Americano">
                 <div style="font-size: 0.75rem; font-weight: 700; color: var(--forest-dark); margin-bottom: 0.25rem;">Café Americano</div>
                 <div style="font-size: 0.78rem; font-weight: 800; color: var(--terracotta); margin-bottom: 0.45rem;">$25</div>
-                <button class="btn-add-upsell-pill" data-name="Café Americano" data-price="25">+ Sumar</button>
+                <button class="btn-add-upsell-pill" data-id="upsell-cafe" data-name="Café Americano de Grano" data-price="25" data-img="assets/img/dishes/drinks.jpg">+ Sumar</button>
               </div>
 
               <div class="upsell-product-card">
                 <img src="assets/img/dishes/crepes.jpg" alt="Crepa Nutella">
                 <div style="font-size: 0.75rem; font-weight: 700; color: var(--forest-dark); margin-bottom: 0.25rem;">Crepa Nutella</div>
                 <div style="font-size: 0.78rem; font-weight: 800; color: var(--terracotta); margin-bottom: 0.45rem;">$75</div>
-                <button class="btn-add-upsell-pill" data-name="Crepa Nutella" data-price="75">+ Sumar</button>
+                <button class="btn-add-upsell-pill" data-id="upsell-crepa" data-name="Crepa Nutella con Plátano" data-price="75" data-img="assets/img/dishes/crepes.jpg">+ Sumar</button>
               </div>
 
               <div class="upsell-product-card">
                 <img src="assets/img/dishes/drinks.jpg" alt="Jugo de Naranja">
                 <div style="font-size: 0.75rem; font-weight: 700; color: var(--forest-dark); margin-bottom: 0.25rem;">Jugo Naranja 500ml</div>
                 <div style="font-size: 0.78rem; font-weight: 800; color: var(--terracotta); margin-bottom: 0.45rem;">$38</div>
-                <button class="btn-add-upsell-pill" data-name="Jugo Naranja" data-price="38">+ Sumar</button>
+                <button class="btn-add-upsell-pill" data-id="upsell-jugo" data-name="Jugo Naranja Natural 500ml" data-price="38" data-img="assets/img/dishes/drinks.jpg">+ Sumar</button>
               </div>
             </div>
           </div>
@@ -1894,7 +1965,7 @@
         <section class="app-screen" id="screen-payment">
           
           <div class="customizer-header-nav">
-            <button class="circle-back-btn" id="btnBackFromPayment">←</button>
+            <button class="circle-back-btn" id="btnBackFromPayment" title="Volver al carrito">←</button>
             <h1 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--forest-dark);">Detalle del Pago</h1>
             <div style="width: 36px;"></div>
           </div>
@@ -1911,29 +1982,35 @@
             <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.65rem;">Método de Pago</div>
             
             <div class="payment-cards-grid">
-              <div class="payment-option-card selected" data-method="Tarjeta en Entrega">
+              <div class="payment-option-card selected" data-method="Terminal Bancaria en Entrega">
                 <div style="font-size: 0.85rem; font-weight: 800; display: flex; justify-content: space-between;">
                   <span>Tarjeta</span>
-                  <span style="color: var(--terracotta);">✓</span>
+                  <span class="payment-check" style="color: var(--terracotta);">✓</span>
                 </div>
                 <div style="font-size: 0.74rem; color: var(--forest-dark); font-weight: 600;">Terminal Bancaria</div>
                 <div style="font-size: 0.68rem; color: var(--text-muted);">Al entregar tu pedido</div>
               </div>
 
               <div class="payment-option-card" data-method="Efectivo en Mostrador">
-                <div style="font-size: 0.85rem; font-weight: 800;">Efectivo</div>
+                <div style="font-size: 0.85rem; font-weight: 800; display: flex; justify-content: space-between;">
+                  <span>Efectivo</span>
+                </div>
                 <div style="font-size: 0.74rem; color: var(--forest-dark); font-weight: 600;">En Mostrador</div>
                 <div style="font-size: 0.68rem; color: var(--text-muted);">Pago al retirar</div>
               </div>
 
               <div class="payment-option-card" data-method="Transferencia SPEI">
-                <div style="font-size: 0.85rem; font-weight: 800;">Transferencia</div>
+                <div style="font-size: 0.85rem; font-weight: 800; display: flex; justify-content: space-between;">
+                  <span>Transferencia</span>
+                </div>
                 <div style="font-size: 0.74rem; color: var(--forest-dark); font-weight: 600;">SPEI Directo</div>
                 <div style="font-size: 0.68rem; color: var(--text-muted);">Sin comisiones</div>
               </div>
 
               <div class="payment-option-card" data-method="Apple Pay / Contactless">
-                <div style="font-size: 0.85rem; font-weight: 800;">Contactless</div>
+                <div style="font-size: 0.85rem; font-weight: 800; display: flex; justify-content: space-between;">
+                  <span>Contactless</span>
+                </div>
                 <div style="font-size: 0.74rem; color: var(--forest-dark); font-weight: 600;">Apple Pay / NFC</div>
                 <div style="font-size: 0.68rem; color: var(--text-muted);">Un solo toque</div>
               </div>
@@ -1945,7 +2022,7 @@
             <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.65rem;">Resumen de tu Pedido</div>
             
             <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.4rem;">
-              <span>1x Combo Mediodía</span>
+              <span id="paymentSummaryItemsCount">1 producto(s)</span>
               <span id="paymentSummarySubtotal">$109.00</span>
             </div>
             <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.4rem;">
@@ -2007,7 +2084,7 @@
         <section class="app-screen" id="screen-pickup-options">
           
           <div class="customizer-header-nav">
-            <button class="circle-back-btn" id="btnBackFromPickup">←</button>
+            <button class="circle-back-btn" id="btnBackFromPickup" title="Volver">←</button>
             <h1 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--forest-dark);">Opciones de Retiro</h1>
             <div style="width: 36px;"></div>
           </div>
@@ -2065,7 +2142,7 @@
             </div>
 
             <div style="display: flex; justify-content: space-around; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); font-size: 0.76rem;">
-              <a href="https://wa.me/525532713451" target="_blank" style="color: #25D366; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 0.35rem;">
+              <a href="https://wa.me/525532713451?text=Hola%20ATOYAC,%20tengo%20una%20consulta%20sobre%20mi%20pedido" target="_blank" style="color: #25D366; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 0.35rem;">
                 <span>💬</span>
                 <span>Atención por WhatsApp (55 3271 3451)</span>
               </a>
@@ -2080,7 +2157,7 @@
         <section class="app-screen" id="screen-table-number" style="background: #FFFFFF;">
           
           <div class="customizer-header-nav" style="border: none;">
-            <button class="circle-back-btn" id="btnBackFromTable">←</button>
+            <button class="circle-back-btn" id="btnBackFromTable" title="Volver">←</button>
             <div style="width: 36px;"></div>
           </div>
 
@@ -2106,7 +2183,7 @@
               <button class="keypad-digit-btn" data-key="9">9</button>
               <button class="keypad-digit-btn" style="visibility: hidden;"></button>
               <button class="keypad-digit-btn" data-key="0">0</button>
-              <button class="keypad-digit-btn" id="btnKeyBackspace">⌫</button>
+              <button class="keypad-digit-btn" id="btnKeyBackspace" title="Borrar">⌫</button>
             </div>
 
             <div style="display: flex; justify-content: center;">
@@ -2123,7 +2200,7 @@
         <section class="app-screen" id="screen-dine-choice" style="background: #FFFFFF;">
           
           <div class="customizer-header-nav" style="border: none;">
-            <button class="circle-back-btn" id="btnBackFromDine">←</button>
+            <button class="circle-back-btn" id="btnBackFromDine" title="Volver">←</button>
             <div style="width: 36px;"></div>
           </div>
 
@@ -2133,14 +2210,14 @@
 
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem;">
               
-              <div id="cardDineIn" style="background: var(--sand-subtle); border: 2px solid var(--forest-dark); border-radius: 24px; padding: 1.5rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; cursor: pointer;">
+              <div id="cardDineIn" style="background: var(--sand-subtle); border: 2px solid var(--forest-dark); border-radius: 24px; padding: 1.5rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.2s;">
                 <div style="width: 64px; height: 64px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(0,0,0,0.06); color: var(--forest-dark);">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
                 </div>
                 <div style="font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 800; color: var(--forest-dark); line-height: 1.25;">Para comer en restaurante</div>
               </div>
 
-              <div id="cardTakeout" style="background: var(--sand-subtle); border: 2px solid var(--border-subtle); border-radius: 24px; padding: 1.5rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; cursor: pointer;">
+              <div id="cardTakeout" style="background: var(--sand-subtle); border: 2px solid var(--border-subtle); border-radius: 24px; padding: 1.5rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.2s;">
                 <div style="width: 64px; height: 64px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(0,0,0,0.06); color: var(--forest-dark);">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                 </div>
@@ -2188,7 +2265,7 @@
         <section class="app-screen" id="screen-live-tracker">
           
           <div class="customizer-header-nav">
-            <button class="circle-back-btn" id="btnBackFromTracker">←</button>
+            <button class="circle-back-btn" id="btnBackFromTracker" title="Volver al inicio">←</button>
             <h1 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--forest-dark);">Tu Pedido en Vivo</h1>
             <div style="width: 36px;"></div>
           </div>
@@ -2208,7 +2285,7 @@
                   <div class="step-circle-badge">✓</div>
                   <div>
                     <div style="font-family: 'Outfit', sans-serif; font-size: 0.88rem; font-weight: 800; color: var(--forest-dark); line-height: 1.2; margin-bottom: 0.15rem;">1. Pedido recibido en cocina</div>
-                    <div style="font-size: 0.72rem; color: var(--text-muted);" id="trackerDeliveryModeSummary">Entrega en Mostrador #200</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted);" id="trackerDeliveryModeSummary">Entrega en Mostrador · Turno #200</div>
                   </div>
                 </div>
 
@@ -2246,15 +2323,8 @@
                 <span style="font-family: monospace; font-weight: 700; color: var(--forest-dark);" id="displayOrderHash">ORD-ATOYAC-200</span>
               </div>
 
-              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                <div style="width: 44px; height: 44px; border-radius: 10px; overflow: hidden; background: var(--sand-subtle); flex-shrink: 0;">
-                  <img src="assets/img/dishes/baguettes.jpg" alt="Combo Mediodía" style="width: 100%; height: 100%; object-fit: cover;">
-                </div>
-                <div style="flex: 1;">
-                  <div style="font-weight: 800; font-size: 0.88rem; color: var(--forest-dark);">1x Combo Mediodía</div>
-                  <div style="font-size: 0.72rem; color: var(--text-muted);">Baguette Pechuga 25cm · Agua Jamaica 500ml</div>
-                </div>
-                <div style="font-weight: 800; font-size: 0.9rem; color: var(--forest-dark);">$109</div>
+              <div id="trackerItemsListSummary">
+                <!-- Dynamically populated from cart items -->
               </div>
 
               <div style="font-size: 0.78rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; color: var(--text-muted);">
@@ -2290,10 +2360,10 @@
 
           <div style="padding: 0 1.25rem 1.5rem; overflow-y: auto;">
             <div style="display: flex; background: var(--sand-subtle); padding: 4px; border-radius: var(--radius-pill); margin-bottom: 1rem;">
-              <button style="flex: 1; padding: 0.55rem; border: none; background: #FFFFFF; border-radius: var(--radius-pill); font-size: 0.82rem; font-weight: 700; color: var(--forest-dark); box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+              <button class="store-mode-toggle active" id="btnModePickup" style="flex: 1; padding: 0.55rem; border: none; background: #FFFFFF; border-radius: var(--radius-pill); font-size: 0.82rem; font-weight: 700; color: var(--forest-dark); box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer;">
                 Pickup en Barra
               </button>
-              <button style="flex: 1; padding: 0.55rem; border: none; background: transparent; border-radius: var(--radius-pill); font-size: 0.82rem; font-weight: 700; color: var(--text-muted);">
+              <button class="store-mode-toggle" id="btnModeDelivery" style="flex: 1; padding: 0.55rem; border: none; background: transparent; border-radius: var(--radius-pill); font-size: 0.82rem; font-weight: 700; color: var(--text-muted); cursor: pointer;">
                 Entrega Directa
               </button>
             </div>
@@ -2316,10 +2386,42 @@
       </div>
 
       <!-- =====================================================================
+           NOTIFICATIONS DRAWER MODAL
+           ===================================================================== -->
+      <div class="modal-backdrop-sheet" id="modalNotifications">
+        <div class="modal-bottom-drawer">
+          <div style="width: 38px; height: 4px; border-radius: 2px; background: #D9D7D2; margin: 10px auto 6px;"></div>
+          
+          <div style="padding: 0.85rem 1.25rem 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--forest-dark);">Notificaciones</h3>
+            <button style="width: 32px; height: 32px; border-radius: 50%; background: var(--sand-subtle); border: none; cursor: pointer;" id="btnCloseNotifModal">✕</button>
+          </div>
+
+          <div style="padding: 0 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="background: var(--sand-subtle); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 0.85rem 1rem;">
+              <div style="font-size: 0.82rem; font-weight: 800; color: var(--forest-dark); margin-bottom: 0.2rem;">Cocina abierta hoy</div>
+              <div style="font-size: 0.74rem; color: var(--text-muted); line-height: 1.3;">Horario regular de 7:00 a 21:00 en Popocatépetl 289. Pedidos directos sin comisiones.</div>
+            </div>
+
+            <div style="background: var(--sand-subtle); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 0.85rem 1rem;">
+              <div style="font-size: 0.82rem; font-weight: 800; color: var(--forest-dark); margin-bottom: 0.2rem;">Pan artesanal recién horneado</div>
+              <div style="font-size: 0.74rem; color: var(--text-muted); line-height: 1.3;">Baguettes y sándwiches listos en 6 a 8 minutos.</div>
+            </div>
+
+            <div style="display: flex; justify-content: center; margin-top: 0.5rem;">
+              <button class="btn-brand-primary-wide" id="btnDismissNotifModal" style="height: 44px !important; min-height: 44px !important;">
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =====================================================================
            NATIVE BOTTOM NAVIGATION BAR (MINIMAL ICONS)
            ===================================================================== -->
       <nav class="app-native-tabbar" id="appNativeTabbar" style="display: none;">
-        <div class="tab-bar-btn active" data-target="screen-home">
+        <div class="tab-bar-btn active" data-target="screen-home" id="tabBtnHome">
           <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
           <span>Inicio</span>
         </div>
@@ -2329,13 +2431,13 @@
           <span>Menú</span>
         </div>
 
-        <div class="tab-bar-btn tab-badge-container" data-target="screen-cart">
+        <div class="tab-bar-btn tab-badge-container" data-target="screen-cart" id="tabBtnCart">
           <div class="tab-badge-pill" id="cartBadgeCount">1</div>
           <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
           <span>Pedido</span>
         </div>
 
-        <div class="tab-bar-btn" data-target="screen-live-tracker">
+        <div class="tab-bar-btn" data-target="screen-live-tracker" id="tabBtnTracker">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
           <span>Seguimiento</span>
         </div>
@@ -2348,14 +2450,10 @@
        NATIVE INTERACTIVE JAVASCRIPT & REALTIME CLOUD SYNC
        ========================================================================= -->
   <script>
-    // State
+    // State & Cart System
     const state = {
       orderNumber: 200,
-      dineMode: 'Para comer en restaurante',
-      selectedBaguette: 'Baguette de Pechuga a la Plancha',
-      selectedDrink: 'Agua Fresca de Jamaica',
-      extraPrice: 0,
-      qty: 1,
+      dineMode: 'Para comer en el restaurante',
       paymentMethod: 'Terminal Bancaria en Entrega',
       deviceId: localStorage.getItem('atoyac_device_id') || ('dev_' + Math.random().toString(36).substr(2, 9)),
       deviceType: (/Android/i.test(navigator.userAgent)) ? 'Android' : (/iPhone|iPad|iPod/i.test(navigator.userAgent)) ? 'iOS' : 'Web'
@@ -2363,12 +2461,43 @@
 
     localStorage.setItem('atoyac_device_id', state.deviceId);
 
+    // Dynamic Reactive Cart
+    let cart = [
+      {
+        id: 'combo-mediodia',
+        name: 'Combo Mediodía',
+        desc: 'Baguette Pechuga 25cm · Agua Jamaica 500ml',
+        price: 109,
+        qty: 1,
+        image: 'assets/img/dishes/baguettes.jpg',
+        isCombo: true
+      }
+    ];
+
+    // Customizer temp state
+    const customizerState = {
+      selectedBaguette: 'Baguette de Pechuga a la Plancha',
+      selectedDrink: 'Agua Fresca de Jamaica',
+      extraDrinkPrice: 0,
+      hasAvocado: false,
+      hasProtein: false,
+      qty: 1
+    };
+
     const screens = document.querySelectorAll('.app-screen');
     const tabBtns = document.querySelectorAll('.tab-bar-btn');
     const splashOverlay = document.getElementById('appSplashOverlay');
     const bottomTabbar = document.getElementById('appNativeTabbar');
     const pushToast = document.getElementById('pushToastBox');
+    const actionToast = document.getElementById('actionToast');
     const scrollBody = document.getElementById('appScrollBody');
+
+    // Toast helper
+    function showToast(message) {
+      actionToast.textContent = message;
+      actionToast.classList.add('show');
+      setTimeout(() => actionToast.classList.remove('show'), 2200);
+    }
 
     // Switch Screen Function
     function navigateTo(screenId) {
@@ -2481,52 +2610,219 @@
     });
     document.getElementById('btnConfirmStoreSelection').addEventListener('click', () => {
       modalStore.classList.remove('open');
+      showToast('✓ Sucursal Popocatépetl 289 seleccionada');
+    });
+
+    const btnModePickup = document.getElementById('btnModePickup');
+    const btnModeDelivery = document.getElementById('btnModeDelivery');
+
+    btnModePickup.addEventListener('click', () => {
+      btnModePickup.style.background = '#FFFFFF';
+      btnModePickup.style.color = 'var(--forest-dark)';
+      btnModePickup.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+      btnModeDelivery.style.background = 'transparent';
+      btnModeDelivery.style.color = 'var(--text-muted)';
+      btnModeDelivery.style.boxShadow = 'none';
+    });
+
+    btnModeDelivery.addEventListener('click', () => {
+      btnModeDelivery.style.background = '#FFFFFF';
+      btnModeDelivery.style.color = 'var(--forest-dark)';
+      btnModeDelivery.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+      btnModePickup.style.background = 'transparent';
+      btnModePickup.style.color = 'var(--text-muted)';
+      btnModePickup.style.boxShadow = 'none';
+    });
+
+    // Notification Drawer Modal
+    const modalNotif = document.getElementById('modalNotifications');
+    document.getElementById('btnHeaderNotif').addEventListener('click', () => {
+      modalNotif.classList.add('open');
+    });
+    document.getElementById('btnCloseNotifModal').addEventListener('click', () => {
+      modalNotif.classList.remove('open');
+    });
+    document.getElementById('btnDismissNotifModal').addEventListener('click', () => {
+      modalNotif.classList.remove('open');
     });
 
     // Category Filtering on Home Screen
     const filterBtns = document.querySelectorAll('.cat-chip-btn');
     const dishItems = document.querySelectorAll('.dish-card-item');
 
+    function applyCategoryFilter(filter) {
+      filterBtns.forEach(b => {
+        if (b.dataset.filter === filter) b.classList.add('active');
+        else b.classList.remove('active');
+      });
+
+      dishItems.forEach(card => {
+        if (filter === 'all') {
+          card.style.display = 'flex';
+        } else if (filter === 'combos') {
+          card.style.display = card.dataset.category === 'combos' ? 'flex' : 'none';
+        } else {
+          card.style.display = card.dataset.category === filter ? 'flex' : 'none';
+        }
+      });
+    }
+
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.dataset.filter;
-
-        dishItems.forEach(card => {
-          if (filter === 'all') {
-            card.style.display = 'flex';
-          } else if (filter === 'combos') {
-            card.style.display = card.dataset.category === 'combos' ? 'flex' : 'none';
-          } else {
-            card.style.display = card.dataset.category === filter ? 'flex' : 'none';
-          }
-        });
+        applyCategoryFilter(btn.dataset.filter);
       });
     });
 
     document.querySelectorAll('.story-item[data-filter]').forEach(item => {
       item.addEventListener('click', () => {
         const targetFilter = item.dataset.filter;
-        filterBtns.forEach(b => {
-          if (b.dataset.filter === targetFilter) {
-            b.click();
-          }
-        });
+        applyCategoryFilter(targetFilter);
+        const anchor = document.getElementById('menuAnchorSection');
+        if (anchor) anchor.scrollIntoView({ behavior: 'smooth' });
       });
     });
 
     document.getElementById('btnViewAllDishes').addEventListener('click', () => {
-      filterBtns[0].click();
+      applyCategoryFilter('all');
     });
 
-    // Combo Customizer Navigation
-    document.getElementById('dishCardFeaturedCombo').addEventListener('click', () => {
-      navigateTo('screen-customizer');
+    // CART SYSTEM FUNCTIONS
+    function updateCartUI() {
+      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+      const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+      // Tab badge
+      const cartBadge = document.getElementById('cartBadgeCount');
+      if (cartBadge) {
+        cartBadge.textContent = totalQty;
+        cartBadge.style.display = totalQty > 0 ? 'flex' : 'none';
+      }
+
+      // Counter text
+      const counterText = document.getElementById('cartItemCounterText');
+      if (counterText) {
+        counterText.textContent = `${totalQty} producto${totalQty === 1 ? '' : 's'}`;
+      }
+
+      // Cart list rendering
+      const container = document.getElementById('cartItemsContainer');
+      if (container) {
+        if (cart.length === 0) {
+          container.innerHTML = `
+            <div style="padding: 2.5rem 1.5rem; text-align: center; color: var(--text-muted);">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛍️</div>
+              <div style="font-weight: 700; color: var(--forest-dark); margin-bottom: 0.25rem;">Tu carrito está vacío</div>
+              <div style="font-size: 0.78rem;">Agrega platillos desde el menú del día.</div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = cart.map((item, index) => `
+            <div class="cart-item-card-row">
+              <div class="cart-item-thumb">
+                <img src="${item.image}" alt="${item.name}">
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--forest-dark); margin-bottom: 0.2rem;">${item.name}</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 0.35rem;">
+                  ${item.desc || ''}
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <div style="font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 800; color: var(--forest-dark);">$ ${item.price * item.qty}</div>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <button class="cart-qty-btn" data-index="${index}" data-action="minus" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-subtle); background: var(--sand-subtle); font-weight: 800; cursor: pointer;">−</button>
+                    <span style="font-size: 0.85rem; font-weight: 800; min-width: 14px; text-align: center;">${item.qty}</span>
+                    <button class="cart-qty-btn" data-index="${index}" data-action="plus" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-subtle); background: var(--sand-subtle); font-weight: 800; cursor: pointer;">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `).join('');
+
+          // Bind cart item stepper buttons
+          container.querySelectorAll('.cart-qty-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              const idx = parseInt(btn.dataset.index, 10);
+              const action = btn.dataset.action;
+              if (action === 'plus') {
+                cart[idx].qty++;
+              } else if (action === 'minus') {
+                if (cart[idx].qty > 1) {
+                  cart[idx].qty--;
+                } else {
+                  cart.splice(idx, 1);
+                }
+              }
+              updateCartUI();
+            });
+          });
+        }
+      }
+
+      // Total displays
+      document.getElementById('cartTotalDisplay').textContent = `$${totalPrice} MXN`;
+      document.getElementById('paymentSummarySubtotal').textContent = `$${totalPrice}.00`;
+      document.getElementById('paymentSummaryTotal').textContent = `$${totalPrice}.00 MXN`;
+      document.getElementById('paymentSummaryItemsCount').textContent = `${totalQty} producto${totalQty === 1 ? '' : 's'}`;
+      document.getElementById('btnExecutePayment').textContent = `Confirmar Pedido · $${totalPrice}`;
+
+      // Update tracker summary
+      const trackerList = document.getElementById('trackerItemsListSummary');
+      if (trackerList) {
+        trackerList.innerHTML = cart.map(item => `
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <div style="width: 44px; height: 44px; border-radius: 10px; overflow: hidden; background: var(--sand-subtle); flex-shrink: 0;">
+              <img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-weight: 800; font-size: 0.88rem; color: var(--forest-dark);">${item.qty}x ${item.name}</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.desc || ''}</div>
+            </div>
+            <div style="font-weight: 800; font-size: 0.9rem; color: var(--forest-dark);">$ ${item.price * item.qty}</div>
+          </div>
+        `).join('');
+      }
+
+      return totalPrice;
+    }
+
+    // Add Item to Cart Helper
+    function addItemToCart(dishObj) {
+      const existing = cart.find(i => i.id === dishObj.id);
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({
+          id: dishObj.id,
+          name: dishObj.name,
+          desc: dishObj.desc || '',
+          price: dishObj.price,
+          qty: 1,
+          image: dishObj.image
+        });
+      }
+      updateCartUI();
+      showToast(`✓ ${dishObj.name} agregado al pedido`);
+    }
+
+    // DISH CARDS INTERACTION (Every dish card functions!)
+    dishItems.forEach(card => {
+      card.addEventListener('click', () => {
+        if (card.dataset.isCombo === 'true') {
+          navigateTo('screen-customizer');
+        } else {
+          addItemToCart({
+            id: card.dataset.id,
+            name: card.dataset.name,
+            desc: card.dataset.desc,
+            price: parseInt(card.dataset.price, 10),
+            image: card.dataset.img
+          });
+        }
+      });
     });
-    document.getElementById('storyItemCombo').addEventListener('click', () => {
-      navigateTo('screen-customizer');
-    });
+
+    // Customizer Navigation & Controls
     document.getElementById('btnBackFromCustomizer').addEventListener('click', () => {
       navigateTo('screen-home');
     });
@@ -2536,8 +2832,8 @@
       row.addEventListener('click', () => {
         document.querySelectorAll('.option-select-row[data-group="baguette"]').forEach(r => r.classList.remove('selected'));
         row.classList.add('selected');
-        state.selectedBaguette = row.dataset.name;
-        recalculateTotal();
+        customizerState.selectedBaguette = row.dataset.name;
+        recalculateCustomizerPrice();
       });
     });
 
@@ -2545,8 +2841,9 @@
       row.addEventListener('click', () => {
         document.querySelectorAll('.option-select-row[data-group="drink"]').forEach(r => r.classList.remove('selected'));
         row.classList.add('selected');
-        state.selectedDrink = row.dataset.name;
-        recalculateTotal();
+        customizerState.selectedDrink = row.dataset.name;
+        customizerState.extraDrinkPrice = parseInt(row.dataset.extra || 0, 10);
+        recalculateCustomizerPrice();
       });
     });
 
@@ -2556,108 +2853,140 @@
 
     optExtraAvocado.addEventListener('click', () => {
       optExtraAvocado.classList.toggle('selected');
-      recalculateTotal();
+      customizerState.hasAvocado = optExtraAvocado.classList.contains('selected');
+      recalculateCustomizerPrice();
     });
 
     optExtraProtein.addEventListener('click', () => {
       optExtraProtein.classList.toggle('selected');
-      recalculateTotal();
+      customizerState.hasProtein = optExtraProtein.classList.contains('selected');
+      recalculateCustomizerPrice();
     });
 
-    // Stepper
+    // Customizer Stepper
     document.getElementById('btnQtyMinus').addEventListener('click', () => {
-      if (state.qty > 1) {
-        state.qty--;
-        document.getElementById('qtyVal').textContent = state.qty;
-        recalculateTotal();
+      if (customizerState.qty > 1) {
+        customizerState.qty--;
+        document.getElementById('qtyVal').textContent = customizerState.qty;
+        recalculateCustomizerPrice();
       }
     });
+
     document.getElementById('btnQtyPlus').addEventListener('click', () => {
-      state.qty++;
-      document.getElementById('qtyVal').textContent = state.qty;
-      recalculateTotal();
+      customizerState.qty++;
+      document.getElementById('qtyVal').textContent = customizerState.qty;
+      recalculateCustomizerPrice();
     });
 
-    function recalculateTotal() {
-      let base = 109; // Combo Mediodía base
-      
-      const selectedDrinkRow = document.querySelector('.option-select-row[data-group="drink"].selected');
-      if (selectedDrinkRow) {
-        base += parseInt(selectedDrinkRow.dataset.extra || 0, 10);
-      }
+    function recalculateCustomizerPrice() {
+      let unitPrice = 109 + customizerState.extraDrinkPrice;
+      if (customizerState.hasAvocado) unitPrice += 15;
+      if (customizerState.hasProtein) unitPrice += 20;
 
-      if (optExtraAvocado.classList.contains('selected')) {
-        base += 15;
-      }
-      if (optExtraProtein.classList.contains('selected')) {
-        base += 20;
-      }
-
-      const total = base * state.qty;
+      const total = unitPrice * customizerState.qty;
       document.getElementById('customizerCurrentPrice').textContent = `$${total} MXN`;
       document.getElementById('btnAddToCartPrice').textContent = `$${total}`;
-      document.getElementById('cartItemPriceText').textContent = `$${total}`;
-      document.getElementById('cartTotalDisplay').textContent = `$${total} MXN`;
-      document.getElementById('paymentSummarySubtotal').textContent = `$${total}.00`;
-      document.getElementById('paymentSummaryTotal').textContent = `$${total}.00 MXN`;
-      document.getElementById('btnExecutePayment').textContent = `Confirmar Pedido · $${total}`;
-
-      // Update specs description
-      let specs = `• ${state.selectedBaguette} (25 cm)<br>• ${state.selectedDrink}`;
-      if (optExtraAvocado.classList.contains('selected')) specs += '<br>• Aguacate extra (40g)';
-      if (optExtraProtein.classList.contains('selected')) specs += '<br>• Doble proteína';
-      document.getElementById('cartItemSpecsText').innerHTML = specs;
-
-      return total;
+      return { unitPrice, total };
     }
 
-    // Add to Cart -> Cart Screen
+    // Add Customized Combo to Cart
     document.getElementById('btnAddToCart').addEventListener('click', () => {
-      recalculateTotal();
+      const calc = recalculateCustomizerPrice();
+      let specs = `${customizerState.selectedBaguette} (25cm) · ${customizerState.selectedDrink}`;
+      if (customizerState.hasAvocado) specs += ' · Aguacate extra';
+      if (customizerState.hasProtein) specs += ' · Doble proteína';
+
+      // Update or add combo in cart
+      const comboInCart = cart.find(i => i.id === 'combo-mediodia');
+      if (comboInCart) {
+        comboInCart.desc = specs;
+        comboInCart.price = calc.unitPrice;
+        comboInCart.qty = customizerState.qty;
+      } else {
+        cart.push({
+          id: 'combo-mediodia',
+          name: 'Combo Mediodía',
+          desc: specs,
+          price: calc.unitPrice,
+          qty: customizerState.qty,
+          image: 'assets/img/dishes/baguettes.jpg',
+          isCombo: true
+        });
+      }
+
+      updateCartUI();
+      showToast('✓ Combo agregado al pedido');
       navigateTo('screen-cart');
     });
+
+    // Upsell Buttons Interaction
+    document.querySelectorAll('.btn-add-upsell-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        addItemToCart({
+          id: btn.dataset.id,
+          name: btn.dataset.name,
+          price: parseInt(btn.dataset.price, 10),
+          image: btn.dataset.img
+        });
+        btn.textContent = '✓ Sumado';
+        setTimeout(() => btn.textContent = '+ Sumar', 1800);
+      });
+    });
+
+    // Cart Navigation
     document.getElementById('btnBackFromCart').addEventListener('click', () => {
       navigateTo('screen-home');
     });
-    document.getElementById('btnEditCartItem').addEventListener('click', () => {
-      navigateTo('screen-customizer');
-    });
 
-    // Cart -> Payment
     document.getElementById('btnGoToCheckout').addEventListener('click', () => {
+      if (cart.length === 0) {
+        showToast('Elige al menos un producto para continuar');
+        return;
+      }
       navigateTo('screen-payment');
     });
+
+    // Payment Screen Interactions
     document.getElementById('btnBackFromPayment').addEventListener('click', () => {
       navigateTo('screen-cart');
     });
 
-    // Payment Cards Selection
     document.querySelectorAll('.payment-option-card').forEach(card => {
       card.addEventListener('click', () => {
         document.querySelectorAll('.payment-option-card').forEach(c => {
           c.classList.remove('selected');
-          const check = c.querySelector('span:last-child');
-          if (check && check.textContent === '✓') check.remove();
+          const check = c.querySelector('.payment-check');
+          if (check) check.remove();
         });
         card.classList.add('selected');
+        const firstDiv = card.querySelector('div:first-child');
+        if (firstDiv && !firstDiv.querySelector('.payment-check')) {
+          const checkSpan = document.createElement('span');
+          checkSpan.className = 'payment-check';
+          checkSpan.style.color = 'var(--terracotta)';
+          checkSpan.textContent = '✓';
+          firstDiv.appendChild(checkSpan);
+        }
         state.paymentMethod = card.dataset.method || 'Terminal en Entrega';
         document.getElementById('displayTrackerPaymentMethod').textContent = state.paymentMethod;
       });
     });
 
-    // Pay -> Celebration
     document.getElementById('btnExecutePayment').addEventListener('click', () => {
       navigateTo('screen-celebration');
     });
 
-    // Celebration -> Pickup Options
+    // Celebration Screen Interactions
     document.getElementById('btnGoToPickupOptions').addEventListener('click', () => {
       navigateTo('screen-pickup-options');
     });
+
     document.getElementById('btnChooseLater').addEventListener('click', () => {
       document.getElementById('homeTrackerFloatingPill').style.display = 'flex';
       navigateTo('screen-home');
+      showToast('Tu pedido #200 está guardado');
     });
+
     document.getElementById('btnBackFromPickup').addEventListener('click', () => {
       navigateTo('screen-celebration');
     });
@@ -2672,7 +3001,7 @@
       navigateTo('screen-dine-choice');
     });
 
-    // Pickup Choice C: Express
+    // Pickup Choice C: Express en Banqueta
     document.getElementById('choiceDrive').addEventListener('click', () => {
       state.dineMode = 'Express en Banqueta (Popocatépetl 289)';
       document.getElementById('displayAssignedMode').textContent = state.dineMode;
@@ -2682,14 +3011,14 @@
         order_number: 200,
         device_id: state.deviceId,
         device_type: state.deviceType,
-        items: ['Combo Mediodía (' + state.selectedBaguette + ')'],
+        items: cart.map(i => `${i.qty}x ${i.name}`),
         mode: state.dineMode,
-        total: recalculateTotal()
+        total: updateCartUI()
       });
       navigateTo('screen-order-number');
     });
 
-    // Table Keypad
+    // Table Keypad Interactions
     let tableDigits = '';
     const tableDigitsEl = document.getElementById('tableDigits');
 
@@ -2721,18 +3050,19 @@
         order_number: 200,
         device_id: state.deviceId,
         device_type: state.deviceType,
-        items: ['Combo Mediodía (' + state.selectedBaguette + ')'],
+        items: cart.map(i => `${i.qty}x ${i.name}`),
         table: mesa,
         mode: state.dineMode,
-        total: recalculateTotal()
+        total: updateCartUI()
       });
       navigateTo('screen-order-number');
     });
+
     document.getElementById('btnBackFromTable').addEventListener('click', () => {
       navigateTo('screen-pickup-options');
     });
 
-    // Dine In vs Takeout
+    // Dine In vs Takeout Interactions
     const cardDineIn = document.getElementById('cardDineIn');
     const cardTakeout = document.getElementById('cardTakeout');
 
@@ -2760,36 +3090,44 @@
         order_number: 200,
         device_id: state.deviceId,
         device_type: state.deviceType,
-        items: ['Combo Mediodía (' + state.selectedBaguette + ')'],
+        items: cart.map(i => `${i.qty}x ${i.name}`),
         mode: state.dineMode,
-        total: recalculateTotal()
+        total: updateCartUI()
       });
       navigateTo('screen-order-number');
     });
 
-    // View Live Tracker
+    // Order Number -> Live Tracker
     document.getElementById('btnGoToLiveTracker').addEventListener('click', () => {
       document.getElementById('homeTrackerFloatingPill').style.display = 'flex';
       navigateTo('screen-live-tracker');
     });
+
     document.getElementById('homeTrackerFloatingPill').addEventListener('click', () => {
       navigateTo('screen-live-tracker');
     });
+
     document.getElementById('btnBackFromTracker').addEventListener('click', () => {
       navigateTo('screen-home');
     });
 
-    // Native Tabbar Tap Navigation
-    tabBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        navigateTo(btn.dataset.target);
-      });
+    // Native Tabbar Tap Navigation (ALL 4 TABS WORK)
+    document.getElementById('tabBtnHome').addEventListener('click', () => {
+      navigateTo('screen-home');
     });
 
     document.getElementById('tabBtnMenu').addEventListener('click', () => {
       navigateTo('screen-home');
-      const menuSection = document.querySelector('.section-label-bar');
+      const menuSection = document.getElementById('menuAnchorSection');
       if (menuSection) menuSection.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    document.getElementById('tabBtnCart').addEventListener('click', () => {
+      navigateTo('screen-cart');
+    });
+
+    document.getElementById('tabBtnTracker').addEventListener('click', () => {
+      navigateTo('screen-live-tracker');
     });
 
     // Desktop Controls
@@ -2798,6 +3136,7 @@
       btnDesktopRestart.addEventListener('click', () => {
         splashOverlay.classList.remove('hidden');
         navigateTo('screen-home');
+        showToast('App reiniciada');
       });
     }
 
@@ -2808,6 +3147,9 @@
         navigateTo('screen-live-tracker');
       });
     }
+
+    // Initialize Cart Display
+    updateCartUI();
 
   </script>
 </body>
