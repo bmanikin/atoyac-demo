@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Kiosco iPad · Punto de Venta | ATOYAC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-white: #ffffff;
+      --forest-dark: #1e2a22;
+      --forest-deep: #16201a;
+      --sage-green: #526f5c;
+      --sage-light: #f2f6f3;
+      --warm-ochre: #d4a359;
+      --terracotta: #c15c3d;
+      --border-light: #e5e9e6;
+      --border-focus: #1e2a22;
+      --text-main: #19221c;
+      --text-muted: #5e6d63;
+      --font-serif: 'Instrument Serif', Georgia, serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Outfit', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg-white);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Screen manager */
+    .kiosk-screen {
+      display: none;
+      height: 100vh;
+      width: 100vw;
+      overflow-y: auto;
+      padding: 2.5rem 3rem;
+      flex-direction: column;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .kiosk-screen.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Top bar for interior steps */
+    .kiosk-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .kiosk-mini-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .kiosk-mini-brand img {
+      height: 34px;
+      width: auto;
+    }
+
+    .kiosk-mini-brand span {
+      font-family: var(--font-display);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      font-size: 1.1rem;
+      color: var(--forest-dark);
+    }
+
+    .kiosk-tag-badge {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      background: var(--sage-light);
+      color: var(--forest-dark);
+      font-weight: 500;
+    }
+
+    .kiosk-reset-btn {
+      background: transparent;
+      border: 1px solid var(--border-light);
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .kiosk-reset-btn:active {
+      background: #f0f0f0;
+      color: var(--forest-dark);
+    }
+
+    /* =========================================================================
+       STEP 1: BIENVENIDA SUPER MINIMALISTA (FONDO BLANCO PURO)
+       ========================================================================= */
+    #screen-welcome {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: #ffffff;
+    }
+
+    .welcome-container {
+      max-width: 680px;
+      width: 100%;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .welcome-logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .welcome-logo-img {
+      height: 90px;
+      width: auto;
+    }
+
+    .welcome-brand-name {
+      font-family: var(--font-display);
+      font-size: 2.8rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      color: var(--forest-dark);
+      line-height: 1;
+    }
+
+    .welcome-tagline {
+      font-size: 1rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 400;
+      margin-top: 0.35rem;
+    }
+
+    .welcome-buttons-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .btn-choice {
+      background: #ffffff;
+      border: 2px solid var(--forest-dark);
+      border-radius: 20px;
+      padding: 2.2rem 1.5rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 24px rgba(30, 42, 34, 0.05);
+    }
+
+    .btn-choice:active, .btn-choice:hover {
+      background: var(--forest-dark);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px rgba(30, 42, 34, 0.12);
+    }
+
+    .btn-choice:active .btn-choice-sub, .btn-choice:hover .btn-choice-sub {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .btn-choice-title {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .btn-choice-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .welcome-footer-link {
+      margin-top: 3.5rem;
+      font-size: 0.84rem;
+      color: #9aa8a0;
+      text-decoration: none;
+    }
+
+    /* =========================================================================
+       STEP 2: ASIGNACIÓN DE NÚMERO DE PEDIDO (SIN PEDIR NOMBRE)
+       ========================================================================= */
+    #screen-name {
+      justify-content: center;
+      align-items: center;
+      background: #ffffff;
+    }
+
+    .ticket-assign-container {
+      max-width: 580px;
+      width: 100%;
+      margin: auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .ticket-assign-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.45rem 1.1rem;
+      border-radius: 999px;
+      background: var(--sage-light);
+      color: var(--forest-dark);
+      margin-bottom: 1.25rem;
+      border: 1px solid rgba(82, 111, 92, 0.15);
+    }
+
+    .ticket-assign-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4.5vw, 3.2rem);
+      font-weight: 600;
+      color: var(--forest-dark);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.6rem;
+    }
+
+    .ticket-assign-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      max-width: 460px;
+      line-height: 1.5;
+    }
+
+    .ticket-display-card {
+      background: linear-gradient(145deg, #f7f9f7 0%, #edf2ee 100%);
+      border: 2px dashed rgba(30, 42, 34, 0.22);
+      border-radius: 24px;
+      padding: 2.2rem 3rem;
+      width: 100%;
+      max-width: 440px;
+      margin-bottom: 2.4rem;
+      box-shadow: 0 12px 32px rgba(30, 42, 34, 0.06);
+      position: relative;
+    }
+
+    .ticket-tagline {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--sage-green);
+      margin-bottom: 0.5rem;
+    }
+
+    .ticket-number-hero {
+      font-family: var(--font-display);
+      font-size: clamp(4.5rem, 9vw, 6rem);
+      font-weight: 700;
+      color: var(--forest-dark);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin: 0.35rem 0 0.85rem 0;
+      text-shadow: 0 2px 8px rgba(30, 42, 34, 0.08);
+    }
+
+    .ticket-footer-hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      padding-top: 0.6rem;
+      border-top: 1px solid rgba(30, 42, 34, 0.08);
+    }
+
+    .ticket-hint-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--terracotta);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .btn-ticket-cta {
+      min-width: 280px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(30, 42, 34, 0.15);
+      transition: all 0.2s ease;
+    }
+
+    .btn-ticket-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(30, 42, 34, 0.22);
+    }
+
+    .btn-ticket-cta:active {
+      transform: translateY(0);
+    }
+
+    .btn-action-primary {
+      background: var(--forest-dark);
+      color: #ffffff;
+      border: none;
+      border-radius: 999px;
+      padding: 1.1rem 2.8rem;
+      font-size: 1.15rem;
+      font-family: var(--font-display);
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 20px rgba(30, 42, 34, 0.15);
+    }
+
+    .btn-action-primary:disabled {
+      background: #d4dad6;
+      color: #8c9890;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .btn-action-primary:not(:disabled):active {
+      transform: scale(0.98);
+      background: var(--forest-deep);
+    }
+
+    /* =========================================================================
+       STEP 3: MENÚ CONVERSACIONAL Y PERSONALIZADO
+       ========================================================================= */
+    #screen-menu {
+      padding-bottom: 6rem;
+    }
+
+    .menu-header {
+      margin-bottom: 1.8rem;
+    }
+
+    .menu-saludo {
+      font-size: 1.05rem;
+      color: var(--sage-green);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .menu-headline {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+      font-weight: 600;
+      color: var(--forest-dark);
+      letter-spacing: -0.02em;
+    }
+
+    /* Grid of main meal options */
+    .dishes-catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .dish-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border-light);
+      border-radius: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    }
+
+    .dish-card:active, .dish-card:hover {
+      border-color: var(--forest-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(30, 42, 34, 0.08);
+    }
+
+    .dish-card-img {
+      width: 100%;
+      height: 155px;
+      object-fit: cover;
+      background: #f4f6f4;
+    }
+
+    .dish-card-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .dish-card-title {
+      font-family: var(--font-display);
+      font-size: 1.22rem;
+      font-weight: 600;
+      color: var(--forest-dark);
+      margin-bottom: 0.35rem;
+    }
+
+    .dish-card-desc {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 1rem;
+    }
+
+    .dish-card-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .dish-card-price {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--forest-dark);
+    }
+
+    .dish-card-select-btn {
+      background: var(--sage-light);
+      color: var(--forest-dark);
+      border: 1px solid rgba(82, 111, 92, 0.2);
+      border-radius: 999px;
+      padding: 0.45rem 0.95rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    /* Bottom sticky bar when cart has items */
+    .kiosk-bottom-cart-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1.5px solid var(--forest-dark);
+      padding: 1rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .cart-summary-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .cart-summary-count {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .cart-summary-total {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--forest-dark);
+    }
+
+    .cart-bar-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn-secondary-kiosk {
+      background: transparent;
+      border: 1.5px solid var(--forest-dark);
+      color: var(--forest-dark);
+      border-radius: 999px;
+      padding: 0.85rem 1.6rem;
+      font-size: 0.95rem;
+      font-family: var(--font-display);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-secondary-kiosk:active {
+      background: #f4f6f4;
+    }
+
+    /* =========================================================================
+       MODAL DE PERSONALIZACIÓN DE PLATILLO (EXTRAS & DETALLES)
+       ========================================================================= */
+    .kiosk-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(22, 32, 26, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .kiosk-modal-overlay.open {
+      display: flex;
+    }
+
+    .kiosk-modal-content {
+      background: #ffffff;
+      border-radius: 24px;
+      max-width: 620px;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 2.2rem 2.4rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+    }
+
+    .modal-dish-title {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      font-weight: 600;
+      color: var(--forest-dark);
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.6rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .custom-section-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--forest-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 1.25rem 0 0.65rem;
+    }
+
+    .custom-options-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.65rem;
+    }
+
+    .custom-pill-label {
+      border: 1.5px solid var(--border-light);
+      border-radius: 12px;
+      padding: 0.75rem 0.85rem;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+    }
+
+    .custom-pill-label input {
+      display: none;
+    }
+
+    .custom-pill-label:has(input:checked) {
+      border-color: var(--forest-dark);
+      background: var(--forest-dark);
+      color: #ffffff;
+    }
+
+    .custom-pill-label:has(input:checked) .custom-pill-sub {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .custom-pill-sub {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .extras-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .extra-check-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-light);
+      cursor: pointer;
+      font-size: 0.92rem;
+    }
+
+    .extra-check-row:has(input:checked) {
+      border-color: var(--forest-dark);
+      background: var(--sage-light);
+      font-weight: 600;
+    }
+
+    .extra-check-row input {
+      accent-color: var(--forest-dark);
+      transform: scale(1.2);
+    }
+
+    .modal-footer {
+      margin-top: 2rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* =========================================================================
+       STEP 4: PANTALLA DE PAGO CON TARJETA EN TERMINAL
+       ========================================================================= */
+    #screen-payment {
+      justify-content: center;
+      align-items: center;
+      background: #ffffff;
+    }
+
+    .payment-container {
+      max-width: 640px;
+      width: 100%;
+      margin: auto;
+      text-align: center;
+    }
+
+    .terminal-card {
+      background: #ffffff;
+      border: 2px solid var(--border-light);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      margin: 1.8rem 0;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .terminal-icon-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: var(--sage-light);
+      color: var(--forest-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.2rem;
+      font-size: 2rem;
+    }
+
+    .terminal-pulse {
+      animation: pulseTerminal 1.8s infinite;
+    }
+
+    @keyframes pulseTerminal {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    .payment-total-num {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--forest-dark);
+      margin: 0.35rem 0 1rem;
+    }
+
+    .payment-order-summary-box {
+      text-align: left;
+      background: #fbfbfb;
+      border-radius: 14px;
+      padding: 1.1rem;
+      font-size: 0.88rem;
+      margin-bottom: 1.5rem;
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid var(--border-light);
+    }
+
+    .order-summary-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.35rem;
+      color: var(--text-main);
+    }
+
+    .order-summary-line .extras-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .terminal-status-text {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--forest-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .terminal-inst-text {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 1.75rem;
+    }
+
+    /* =========================================================================
+       STEP 5: CONFIRMACIÓN Y ENTREGA
+       ========================================================================= */
+    #screen-confirmation {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: #ffffff;
+    }
+
+    .confirmation-container {
+      max-width: 620px;
+      width: 100%;
+      margin: auto;
+      padding: 2rem;
+      border: 2px solid var(--forest-dark);
+      border-radius: 28px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.05);
+    }
+
+    .confirm-check-icon {
+      width: 76px;
+      height: 76px;
+      background: var(--forest-dark);
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      margin: 0 auto 1.5rem;
+    }
+
+    .confirm-ticket-badge {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--forest-dark);
+      letter-spacing: -0.01em;
+      margin-bottom: 1rem;
+    }
+
+    .confirm-message-box {
+      background: var(--sage-light);
+      border-radius: 18px;
+      padding: 1.5rem;
+      margin-bottom: 1.8rem;
+      text-align: center;
+    }
+
+    .confirm-instruction-main {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--forest-dark);
+      line-height: 1.45;
+    }
+
+    .confirm-order-recap {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      text-align: left;
+      background: #fbfbfb;
+      padding: 1rem;
+      border-radius: 12px;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+
+    .auto-reset-timer {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =======================================================================
+       1. PANTALLA DE BIENVENIDA (ATTRACT SCREEN - BLANCO PURO)
+       ======================================================================= -->
+  <section class="kiosk-screen active" id="screen-welcome">
+    <div class="welcome-container">
+      <div class="welcome-logo-wrap">
+        <img src="assets/img/logo.svg" alt="ATOYAC" class="welcome-logo-img" />
+        <h1 class="welcome-brand-name">ATOYAC</h1>
+        <p class="welcome-tagline">Comida para tu día a día · Sin hacer fila</p>
+      </div>
+
+      <div class="welcome-buttons-row">
+        <!-- BOTÓN 1: COMER EN BARRA -->
+        <button class="btn-choice" id="btn-mode-barra" onclick="startOrder('barra')">
+          <span class="btn-choice-title">Comer en Barra</span>
+          <span class="btn-choice-sub">Siéntate y te lo llevamos</span>
+        </button>
+
+        <!-- BOTÓN 2: PARA LLEVAR -->
+        <button class="btn-choice" id="btn-mode-llevar" onclick="startOrder('llevar')">
+          <span class="btn-choice-title">Para Llevar</span>
+          <span class="btn-choice-sub">Empaque rápido en barra</span>
+        </button>
+      </div>
+
+      <a href="/" class="welcome-footer-link">← Volver al Sitio Web Principal</a>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       2. ASIGNACIÓN AUTOMÁTICA DE NÚMERO DE PEDIDO (SIN PEDIR NOMBRE)
+       ======================================================================= -->
+  <section class="kiosk-screen" id="screen-name">
+    <div class="kiosk-topbar">
+      <div class="kiosk-mini-brand">
+        <img src="assets/img/logo.svg" alt="ATOYAC" />
+        <span>ATOYAC</span>
+      </div>
+      <button class="kiosk-reset-btn" onclick="resetToWelcome()">Cancelar Orden</button>
+    </div>
+
+    <div class="ticket-assign-container">
+      <div class="ticket-assign-badge" id="assigned-order-mode">Comer en Barra</div>
+      <h2 class="ticket-assign-title">Tu número de pedido</h2>
+      <p class="ticket-assign-subtitle">Consérvalo para recibir o recoger tus alimentos en la barra.</p>
+
+      <div class="ticket-display-card">
+        <span class="ticket-tagline">NÚMERO ASIGNADO</span>
+        <div class="ticket-number-hero" id="assigned-ticket-display">#105</div>
+        <div class="ticket-footer-hint">
+          <span class="ticket-hint-dot"></span>
+          <span>Te llamaremos con este número cuando tu orden esté lista</span>
+        </div>
+      </div>
+
+      <button id="btn-name-continue" class="btn-action-primary btn-ticket-cta" onclick="confirmName()">
+        Continuar al Menú →
+      </button>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       3. MENÚ CONVERSACIONAL ("PERFECTO DANIEL T. DIME QUÉ QUIERES LLEVAR HOY")
+       ======================================================================= -->
+  <section class="kiosk-screen" id="screen-menu">
+    <div class="kiosk-topbar">
+      <div class="kiosk-mini-brand">
+        <img src="assets/img/logo.svg" alt="ATOYAC" />
+        <span>ATOYAC</span>
+      </div>
+      <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <span class="kiosk-tag-badge" id="badge-dining-mode">Comer en Barra</span>
+        <button class="kiosk-reset-btn" onclick="resetToWelcome()">Reiniciar</button>
+      </div>
+    </div>
+
+    <div class="menu-header">
+      <div class="menu-saludo" id="menu-client-greeting">PERFECTO, DANIEL T.</div>
+      <h2 class="menu-headline" id="menu-headline-question">Dime, ¿qué quieres llevar hoy?</h2>
+    </div>
+
+    <!-- Catálogo de platillos táctiles -->
+    <div class="dishes-catalog-grid" id="dishes-grid">
+      <!-- 1. SÁNDWICH O CROISSANT -->
+      <div class="dish-card" onclick="openDishModal('sandwich')">
+        <img src="assets/img/dishes/sandwiches.jpg" alt="Sándwich o Croissant" class="dish-card-img" />
+        <div class="dish-card-body">
+          <div>
+            <h3 class="dish-card-title">Sándwich o Croissant</h3>
+            <p class="dish-card-desc">Elige pan artesanal o croissant hojaldrado. Pollo, jamón y queso, res o huevo.</p>
+          </div>
+          <div class="dish-card-foot">
+            <span class="dish-card-price">$65</span>
+            <span class="dish-card-select-btn">+ Personalizar</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. CHILAQUILES -->
+      <div class="dish-card" onclick="openDishModal('chilaquiles')">
+        <img src="assets/img/dishes/sandwiches.jpg" alt="Chilaquiles Atoyac" class="dish-card-img" />
+        <div class="dish-card-body">
+          <div>
+            <h3 class="dish-card-title">Chilaquiles Caseros</h3>
+            <p class="dish-card-desc">Totopos horneados con salsa verde o roja. Con pollo, res o huevo tierno y queso.</p>
+          </div>
+          <div class="dish-card-foot">
+            <span class="dish-card-price">$75</span>
+            <span class="dish-card-select-btn">+ Personalizar</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. MOLLETES -->
+      <div class="dish-card" onclick="openDishModal('molletes')">
+        <img src="assets/img/dishes/baguettes.jpg" alt="Molletes Atoyac" class="dish-card-img" />
+        <div class="dish-card-body">
+          <div>
+            <h3 class="dish-card-title">Molletes Artesanales</h3>
+            <p class="dish-card-desc">Bolillo con frijoles refritos y queso gratinado. Con pollo o res y pico de gallo.</p>
+          </div>
+          <div class="dish-card-foot">
+            <span class="dish-card-price">$65</span>
+            <span class="dish-card-select-btn">+ Personalizar</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. FRUTA FRESCA -->
+      <div class="dish-card" onclick="openDishModal('fruta')">
+        <img src="assets/img/dishes/drinks.jpg" alt="Fruta Fresca" class="dish-card-img" />
+        <div class="dish-card-body">
+          <div>
+            <h3 class="dish-card-title">Fruta Fresca</h3>
+            <p class="dish-card-desc">Manzana fresca, plátano o tazón mixto. Opción de miel, granola y yogur.</p>
+          </div>
+          <div class="dish-card-foot">
+            <span class="dish-card-price">$35</span>
+            <span class="dish-card-select-btn">+ Elegir</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. BEBIDAS & JUGOS -->
+      <div class="dish-card" onclick="openDishModal('bebidas')">
+        <img src="assets/img/dishes/drinks.jpg" alt="Bebidas y Jugos" class="dish-card-img" />
+        <div class="dish-card-body">
+          <div>
+            <h3 class="dish-card-title">Jugos Naturales</h3>
+            <p class="dish-card-desc">Jugo de naranja recién exprimido o jugo verde (espinaca, pepino, limón y naranja).</p>
+          </div>
+          <div class="dish-card-foot">
+            <span class="dish-card-price">Desde $38</span>
+            <span class="dish-card-select-btn">+ Elegir</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. CAFÉ MATUTINO -->
+      <div class="dish-card" onclick="openDishModal('cafe')">
+        <img src="assets/img/dishes/drinks.jpg" alt="Café de Grano" class="dish-card-img" />
+        <div class="dish-card-body">
+          <div>
+            <h3 class="dish-card-title">Café Matutino</h3>
+            <p class="dish-card-desc">Café americano de grano recién colado o café con leche matutino caliente.</p>
+          </div>
+          <div class="dish-card-foot">
+            <span class="dish-card-price">Desde $25</span>
+            <span class="dish-card-select-btn">+ Elegir</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de carrito inferior si hay productos -->
+    <div class="kiosk-bottom-cart-bar" id="kiosk-cart-bar" style="display: none;">
+      <div class="cart-summary-text">
+        <span class="cart-summary-count" id="cart-items-count">1 producto seleccionado</span>
+        <span class="cart-summary-total" id="cart-total-amount">$0</span>
+      </div>
+
+      <div class="cart-bar-actions">
+        <button class="btn-action-primary" onclick="proceedToPayment()">
+          Pagar Pedido con Tarjeta →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       MODAL DE PERSONALIZACIÓN DE PLATILLO (EXTRAS & INGREDIENTES)
+       ======================================================================= -->
+  <div class="kiosk-modal-overlay" id="dish-modal">
+    <div class="kiosk-modal-content">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-dish-title" id="modal-title">Personalizar Platillo</h3>
+          <p id="modal-desc" style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.2rem;"></p>
+        </div>
+        <button class="modal-close-btn" onclick="closeDishModal()">✕</button>
+      </div>
+
+      <div id="modal-customization-body">
+        <!-- Contenido dinámico según el platillo -->
+      </div>
+
+      <div class="modal-footer">
+        <div>
+          <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">Total del platillo</span>
+          <span id="modal-dish-price" style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--forest-dark);">$0</span>
+        </div>
+
+        <button class="btn-action-primary" onclick="addDishToCart()">
+          Agregar a mi Pedido ✓
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       4. PANTALLA DE PAGO CON TARJETA EN TERMINAL CONECTADA
+       ======================================================================= -->
+  <section class="kiosk-screen" id="screen-payment">
+    <div class="kiosk-topbar">
+      <div class="kiosk-mini-brand">
+        <img src="assets/img/logo.svg" alt="ATOYAC" />
+        <span>ATOYAC</span>
+      </div>
+      <button class="kiosk-reset-btn" onclick="goToMenu()">← Agregar otro platillo</button>
+    </div>
+
+    <div class="payment-container">
+      <span class="kiosk-tag-badge">Paso Final de Pago</span>
+      <h2 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 600; color: var(--forest-dark); margin: 0.6rem 0 0.25rem;">
+        Paga con tu Tarjeta
+      </h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Terminal punto de venta conectada a nuestro sistema de cobro.
+      </p>
+
+      <div class="terminal-card">
+        <div class="terminal-icon-wrap terminal-pulse">
+          <svg style="width: 36px; height: 36px; fill: var(--forest-dark);" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+        </div>
+
+        <div style="font-size: 0.9rem; color: var(--text-muted);">Monto total a cobrar</div>
+        <div class="payment-total-num" id="payment-display-total">$0</div>
+
+        <!-- Resumen del pedido -->
+        <div class="payment-order-summary-box" id="payment-order-summary">
+          <!-- Items render -->
+        </div>
+
+        <div class="terminal-status-text" id="terminal-status-text">
+          Esperando tarjeta en la terminal...
+        </div>
+        <p class="terminal-inst-text" id="terminal-inst-text">
+          Acerca tu tarjeta contactless, o insértala con chip en la terminal junto a la pantalla.
+        </p>
+
+        <!-- Botón para procesar o simular cobro OK -->
+        <button id="btn-process-terminal" class="btn-action-primary" style="width: 100%; justify-content: center;" onclick="simulateTerminalApproval()">
+          Procesar Cobro en Terminal (OK)
+        </button>
+      </div>
+
+      <button class="btn-secondary-kiosk" onclick="goToMenu()">
+        + Regresar a escoger otro platillo
+      </button>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       5. PANTALLA DE CONFIRMACIÓN Y ENTREGA
+       ======================================================================= -->
+  <section class="kiosk-screen" id="screen-confirmation">
+    <div class="confirmation-container">
+      <div class="confirm-check-icon">✓</div>
+
+      <div class="confirm-ticket-badge" id="confirm-ticket-number">Pedido #104</div>
+
+      <div class="confirm-message-box">
+        <p class="confirm-instruction-main" id="confirm-main-instruction">
+          <!-- Texto dinámico según sea Comer en Barra o Para Llevar -->
+        </p>
+      </div>
+
+      <div class="confirm-order-recap">
+        <strong style="display: block; margin-bottom: 0.5rem; color: var(--forest-dark);">Resumen de lo que ordenaste:</strong>
+        <div id="confirm-items-list"></div>
+      </div>
+
+      <button class="btn-action-primary" style="width: 100%; justify-content: center;" onclick="resetToWelcome()">
+        Finalizar (Nuevo Pedido)
+      </button>
+
+      <div class="auto-reset-timer" id="auto-reset-countdown">
+        Esta pantalla regresará al inicio en 20 segundos...
+      </div>
+    </div>
+  </section>
+
+  <!-- STORE AND SCRIPT LOGIC -->
+  <script type="module">
+    import { AtoyacStore } from './js/store.js';
+
+    // Global Kiosk State
+    window.kioskState = {
+      diningMode: 'barra', // 'barra' | 'llevar'
+      ticketNumber: null,
+      customerName: '',
+      cart: [],
+      currentModalDish: null,
+      currentModalPrice: 0,
+      autoResetTimer: null,
+      countdownInterval: null
+    };
+
+    // Helper: format MXN
+    const formatMXN = (n) => `$${Number(n || 0).toFixed(0)}`;
+
+    // Show screen helper
+    function showScreen(screenId) {
+      document.querySelectorAll('.kiosk-screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) target.classList.add('active');
+    }
+
+    // 1. START ORDER (Mode: 'barra' | 'llevar')
+    window.startOrder = function(mode) {
+      window.kioskState.diningMode = mode;
+      window.kioskState.cart = [];
+
+      // Asignar automáticamente el número de pedido en lugar de pedir nombre
+      const nextTicket = AtoyacStore.getNextTicketNumber ? AtoyacStore.getNextTicketNumber() : 101;
+      window.kioskState.ticketNumber = nextTicket;
+      window.kioskState.customerName = `Pedido #${nextTicket}`;
+
+      const isBarra = mode === 'barra';
+      const modeLabel = isBarra ? 'Comer en Barra' : 'Para Llevar';
+      const modeEl = document.getElementById('assigned-order-mode');
+      if (modeEl) modeEl.textContent = modeLabel;
+
+      const displayEl = document.getElementById('assigned-ticket-display');
+      if (displayEl) displayEl.textContent = `#${nextTicket}`;
+
+      showScreen('screen-name');
+    };
+
+    // 2. CONFIRMAR NÚMERO Y CONTINUAR AL MENÚ
+    window.confirmName = function() {
+      const ticketNum = window.kioskState.ticketNumber || 101;
+      const isBarra = window.kioskState.diningMode === 'barra';
+      const modeLabel = isBarra ? 'Comer en Barra' : 'Para Llevar';
+
+      document.getElementById('badge-dining-mode').textContent = modeLabel;
+      document.getElementById('menu-client-greeting').textContent = `PEDIDO #${ticketNum}`;
+      document.getElementById('menu-headline-question').textContent = isBarra 
+        ? 'Dime, ¿qué te preparamos hoy?' 
+        : 'Dime, ¿qué quieres llevar hoy?';
+
+      updateCartBar();
+      showScreen('screen-menu');
+    };
+
+    // Tecla Enter o Espacio para continuar rápidamente
+    document.addEventListener('keydown', (e) => {
+      const activeScreen = document.querySelector('.kiosk-screen.active');
+      if (activeScreen && activeScreen.id === 'screen-name' && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        window.confirmName();
+      }
+    });
+
+    // 3. DISH MODAL LOGIC
+    const DISH_CONFIGS = {
+      sandwich: {
+        id: 'sandwich',
+        name: 'Sándwich o Croissant',
+        desc: 'Elige tu pan, relleno principal y agrega los extras que quieras.',
+        basePrice: 65,
+        options: [
+          {
+            title: 'Tipo de Pan',
+            type: 'radio',
+            name: 'bread_type',
+            choices: [
+              { label: 'Sándwich Artesanal', price: 0, default: true },
+              { label: 'Pan de Croissant', price: 10 }
+            ]
+          },
+          {
+            title: 'Relleno o Proteína',
+            type: 'radio',
+            name: 'protein_type',
+            choices: [
+              { label: 'Pollo a la plancha', price: 0, default: true },
+              { label: 'Jamón de pavo', price: 0 },
+              { label: 'Queso panela fresco', price: 0 },
+              { label: 'Res a la plancha', price: 15 },
+              { label: 'Huevo preparado', price: 0 }
+            ]
+          }
+        ],
+        extras: [
+          { label: 'Aguacate Hass fresco', price: 15 },
+          { label: 'Doble proteína', price: 20 },
+          { label: 'Queso panela extra', price: 12 },
+          { label: 'Espinaca y jitomate extra', price: 0 }
+        ]
+      },
+      chilaquiles: {
+        id: 'chilaquiles',
+        name: 'Chilaquiles Caseros',
+        desc: 'Totopos crujientes con salsa recién hecha, crema y queso.',
+        basePrice: 75,
+        options: [
+          {
+            title: 'Proteína',
+            type: 'radio',
+            name: 'chilaquiles_protein',
+            choices: [
+              { label: 'Con Pollo deshebrado', price: 0, default: true },
+              { label: 'Con Res', price: 15 },
+              { label: 'Con Huevo', price: 0 }
+            ]
+          },
+          {
+            title: 'Salsa',
+            type: 'radio',
+            name: 'chilaquiles_salsa',
+            choices: [
+              { label: 'Salsa Verde tatemada', price: 0, default: true },
+              { label: 'Salsa Roja de jitomate', price: 0 }
+            ]
+          }
+        ],
+        extras: [
+          { label: 'Queso panela / cotija extra', price: 15 },
+          { label: 'Aguacate Hass fresco', price: 15 },
+          { label: 'Crema ácida extra', price: 8 },
+          { label: 'Porción de frijoles refritos', price: 15 }
+        ]
+      },
+      molletes: {
+        id: 'molletes',
+        name: 'Molletes Artesanales',
+        desc: 'Pan recién horneado con frijoles refritos y queso gratinado.',
+        basePrice: 65,
+        options: [
+          {
+            title: 'Variedad o Proteína',
+            type: 'radio',
+            name: 'molletes_type',
+            choices: [
+              { label: 'Con Pollo deshebrado', price: 15 },
+              { label: 'Con Res a la plancha', price: 20 },
+              { label: 'Tradicionales (Queso gratinado)', price: 0, default: true }
+            ]
+          }
+        ],
+        extras: [
+          { label: 'Pico de gallo extra', price: 0 },
+          { label: 'Aguacate fresco', price: 15 },
+          { label: 'Queso gratinado extra', price: 15 }
+        ]
+      },
+      fruta: {
+        id: 'fruta',
+        name: 'Fruta Fresca del Día',
+        desc: 'Fruta seleccionada de temporada, limpia y fresca.',
+        basePrice: 35,
+        options: [
+          {
+            title: 'Selecciona tu Fruta',
+            type: 'radio',
+            name: 'fruit_type',
+            choices: [
+              { label: 'Manzana fresca picada', price: 0, default: true },
+              { label: 'Plátano rebanado', price: 0 },
+              { label: 'Tazón Mixto (Manzana + Plátano)', price: 10 }
+            ]
+          }
+        ],
+        extras: [
+          { label: 'Miel de abeja 100% pura', price: 10 },
+          { label: 'Granola artesanal', price: 10 },
+          { label: 'Yogur natural sin azúcar', price: 15 }
+        ]
+      },
+      bebidas: {
+        id: 'bebidas',
+        name: 'Jugos Naturales',
+        desc: '100% fruta natural sin concentrados ni azúcar añadida.',
+        basePrice: 38,
+        options: [
+          {
+            title: 'Bebida',
+            type: 'radio',
+            name: 'drink_type',
+            choices: [
+              { label: 'Jugo de Naranja 500 ml', price: 0, default: true },
+              { label: 'Jugo Verde 500 ml (Espinaca, pepino, limón, naranja)', price: 7 }
+            ]
+          }
+        ],
+        extras: [
+          { label: 'Poco hielo', price: 0 },
+          { label: 'Sin hielo', price: 0 }
+        ]
+      },
+      cafe: {
+        id: 'cafe',
+        name: 'Café Matutino',
+        desc: 'Café mexicano de grano recién molido colado cada 2 horas.',
+        basePrice: 25,
+        options: [
+          {
+            title: 'Tipo de Café',
+            type: 'radio',
+            name: 'coffee_type',
+            choices: [
+              { label: 'Café Americano de grano (12 oz)', price: 0, default: true },
+              { label: 'Café con Leche matutino (12 oz)', price: 10 }
+            ]
+          }
+        ],
+        extras: [
+          { label: 'Leche deslactosada / avena', price: 10 },
+          { label: 'Doble shot de café', price: 12 },
+          { label: 'Endulzante natural', price: 0 }
+        ]
+      }
+    };
+
+    window.openDishModal = function(dishKey) {
+      const config = DISH_CONFIGS[dishKey];
+      if (!config) return;
+
+      window.kioskState.currentModalDish = config;
+      document.getElementById('modal-title').textContent = config.name;
+      document.getElementById('modal-desc').textContent = config.desc;
+
+      const body = document.getElementById('modal-customization-body');
+      let html = '';
+
+      // Options groups
+      if (config.options) {
+        config.options.forEach((group, idx) => {
+          html += `<div class="custom-section-title">${group.title}</div>`;
+          html += `<div class="custom-options-group">`;
+          group.choices.forEach((choice, cIdx) => {
+            const isChecked = choice.default || cIdx === 0;
+            html += `
+              <label class="custom-pill-label">
+                <input type="radio" name="${group.name}" value="${choice.label}" data-extra-price="${choice.price}" ${isChecked ? 'checked' : ''} onchange="recalculateModalPrice()" />
+                <span>${choice.label}</span>
+                ${choice.price > 0 ? `<span class="custom-pill-sub">+${formatMXN(choice.price)}</span>` : ''}
+              </label>
+            `;
+          });
+          html += `</div>`;
+        });
+      }
+
+      // Extras
+      if (config.extras && config.extras.length > 0) {
+        html += `<div class="custom-section-title">Extras Disponibles</div>`;
+        html += `<div class="extras-list">`;
+        config.extras.forEach((extra, eIdx) => {
+          html += `
+            <label class="extra-check-row">
+              <span>${extra.label}</span>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span style="font-weight: 600; color: var(--forest-dark);">${extra.price > 0 ? '+' + formatMXN(extra.price) : 'Sin costo'}</span>
+                <input type="checkbox" name="extra_opt" value="${extra.label}" data-price="${extra.price}" onchange="recalculateModalPrice()" />
+              </div>
+            </label>
+          `;
+        });
+        html += `</div>`;
+      }
+
+      body.innerHTML = html;
+      recalculateModalPrice();
+      document.getElementById('dish-modal').classList.add('open');
+    };
+
+    window.closeDishModal = function() {
+      document.getElementById('dish-modal').classList.remove('open');
+      window.kioskState.currentModalDish = null;
+    };
+
+    window.recalculateModalPrice = function() {
+      const config = window.kioskState.currentModalDish;
+      if (!config) return;
+
+      let total = config.basePrice;
+
+      // Sum radio options extra price
+      const checkedRadios = document.querySelectorAll('#modal-customization-body input[type="radio"]:checked');
+      checkedRadios.forEach(r => {
+        total += Number(r.dataset.extraPrice || 0);
+      });
+
+      // Sum checkboxes
+      const checkedExtras = document.querySelectorAll('#modal-customization-body input[type="checkbox"]:checked');
+      checkedExtras.forEach(c => {
+        total += Number(c.dataset.price || 0);
+      });
+
+      window.kioskState.currentModalPrice = total;
+      document.getElementById('modal-dish-price').textContent = formatMXN(total);
+    };
+
+    window.addDishToCart = function() {
+      const config = window.kioskState.currentModalDish;
+      if (!config) return;
+
+      const selectedOptions = [];
+      const checkedRadios = document.querySelectorAll('#modal-customization-body input[type="radio"]:checked');
+      checkedRadios.forEach(r => selectedOptions.push(r.value));
+
+      const selectedExtras = [];
+      const checkedExtras = document.querySelectorAll('#modal-customization-body input[type="checkbox"]:checked');
+      checkedExtras.forEach(c => selectedExtras.push(c.value));
+
+      const item = {
+        dishId: config.id,
+        name: config.name,
+        options: selectedOptions,
+        extras: selectedExtras,
+        price: window.kioskState.currentModalPrice
+      };
+
+      window.kioskState.cart.push(item);
+      closeDishModal();
+      updateCartBar();
+    };
+
+    function updateCartBar() {
+      const bar = document.getElementById('kiosk-cart-bar');
+      const countEl = document.getElementById('cart-items-count');
+      const totalEl = document.getElementById('cart-total-amount');
+
+      const cart = window.kioskState.cart;
+      if (cart.length === 0) {
+        bar.style.display = 'none';
+        return;
+      }
+
+      bar.style.display = 'flex';
+      countEl.textContent = `${cart.length} ${cart.length === 1 ? 'platillo seleccionado' : 'platillos seleccionados'}`;
+      const sum = cart.reduce((acc, i) => acc + i.price, 0);
+      totalEl.textContent = formatMXN(sum);
+    }
+
+    // 4. PROCEED TO PAYMENT
+    window.proceedToPayment = function() {
+      const cart = window.kioskState.cart;
+      if (cart.length === 0) return;
+
+      const total = cart.reduce((acc, i) => acc + i.price, 0);
+      document.getElementById('payment-display-total').textContent = formatMXN(total);
+
+      // Render summary box
+      const box = document.getElementById('payment-order-summary');
+      let html = '';
+      cart.forEach((i, idx) => {
+        const details = [...i.options, ...i.extras].join(' · ');
+        html += `
+          <div class="order-summary-line">
+            <div>
+              <strong>${i.name}</strong>
+              ${details ? `<div class="extras-text">${details}</div>` : ''}
+            </div>
+            <strong>${formatMXN(i.price)}</strong>
+          </div>
+        `;
+      });
+      box.innerHTML = html;
+
+      // Reset terminal state
+      document.getElementById('terminal-status-text').textContent = 'Esperando tarjeta en la terminal...';
+      document.getElementById('terminal-inst-text').textContent = 'Acerca tu tarjeta contactless, o insértala con chip en la terminal conectada.';
+      document.getElementById('btn-process-terminal').disabled = false;
+      document.getElementById('btn-process-terminal').textContent = 'Procesar Cobro en Terminal (OK)';
+
+      showScreen('screen-payment');
+    };
+
+    window.goToMenu = function() {
+      showScreen('screen-menu');
+    };
+
+    // 5. SIMULATE TERMINAL APPROVAL & SUBMIT ORDER
+    window.simulateTerminalApproval = function() {
+      const btn = document.getElementById('btn-process-terminal');
+      btn.disabled = true;
+      btn.textContent = 'Conectando con terminal bancaria...';
+      document.getElementById('terminal-status-text').textContent = 'Procesando cobro...';
+
+      setTimeout(() => {
+        btn.textContent = '¡Pago Aprobado con Éxito! ✓';
+        document.getElementById('terminal-status-text').textContent = 'Cobro Aprobado por el Banco';
+        document.getElementById('terminal-inst-text').textContent = 'Imprimiendo comprobante y enviando a barra de cocina...';
+
+        setTimeout(() => {
+          finishOrderAndConfirm();
+        }, 800);
+      }, 1000);
+    };
+
+    function finishOrderAndConfirm() {
+      const state = window.kioskState;
+      const total = state.cart.reduce((acc, i) => acc + i.price, 0);
+      const isBarra = state.diningMode === 'barra';
+
+      // Convert items for AtoyacStore
+      const formattedItems = state.cart.map(c => ({
+        id: c.dishId,
+        name: c.name,
+        qty: 1,
+        unitPrice: c.price,
+        extras: [...c.options, ...c.extras],
+        notes: ''
+      }));
+
+      // Add to store
+      const created = AtoyacStore.addOrder({
+        ticketNumber: state.ticketNumber,
+        customerName: state.customerName || `Pedido #${state.ticketNumber}`,
+        source: 'Kiosco iPad',
+        orderType: isBarra ? 'Comer en Barra' : 'Para Llevar',
+        paymentMethod: 'Tarjeta (Terminal POS)',
+        paymentStatus: 'Pagado',
+        status: 'nuevo',
+        items: formattedItems,
+        total: total,
+        notes: `Kiosco iPad · ${isBarra ? 'Comer en Barra' : 'Para Llevar'}`
+      });
+
+      // Show confirmation screen
+      const finalTicket = created.ticketNumber || state.ticketNumber;
+      document.getElementById('confirm-ticket-number').textContent = `Pedido #${finalTicket}`;
+
+      // Confirmation instructions referencing the assigned ticket number
+      if (!isBarra) {
+        // PARA LLEVAR:
+        document.getElementById('confirm-main-instruction').innerHTML = 
+          `Tu pedido fue preparado para llevar.<br /><strong>Recógelo en barra al escuchar tu número: Pedido #${finalTicket}.</strong>`;
+      } else {
+        // COMER EN BARRA:
+        document.getElementById('confirm-main-instruction').innerHTML = 
+          `Tu pedido es para comer aquí.<br /><strong>Toma asiento en la barra y te buscaremos con tu número: Pedido #${finalTicket}.</strong>`;
+      }
+
+      // Recap list
+      const recapEl = document.getElementById('confirm-items-list');
+      recapEl.innerHTML = state.cart.map(i => {
+        const desc = [...i.options, ...i.extras].join(', ');
+        return `<div>• <strong>${i.name}</strong> (${formatMXN(i.price)})${desc ? `<br /><span style="font-size:0.8rem; color:#777; margin-left:12px;">${desc}</span>` : ''}</div>`;
+      }).join('');
+
+      showScreen('screen-confirmation');
+
+      // Countdown to reset
+      let remaining = 20;
+      const countEl = document.getElementById('auto-reset-countdown');
+      if (window.kioskState.countdownInterval) clearInterval(window.kioskState.countdownInterval);
+
+      window.kioskState.countdownInterval = setInterval(() => {
+        remaining -= 1;
+        if (countEl) countEl.textContent = `Esta pantalla regresará al inicio en ${remaining} segundos...`;
+        if (remaining <= 0) {
+          clearInterval(window.kioskState.countdownInterval);
+          resetToWelcome();
+        }
+      }, 1000);
+    }
+
+    // RESET TO WELCOME SCREEN
+    window.resetToWelcome = function() {
+      if (window.kioskState.countdownInterval) clearInterval(window.kioskState.countdownInterval);
+      window.kioskState.cart = [];
+      window.kioskState.ticketNumber = null;
+      window.kioskState.customerName = '';
+      window.kioskState.diningMode = 'barra';
+      updateCartBar();
+      showScreen('screen-welcome');
+    };
+  </script>
+</body>
+</html>
