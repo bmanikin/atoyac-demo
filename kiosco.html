@@ -901,7 +901,7 @@
 
       <div class="ticket-display-card">
         <span class="ticket-tagline">NÚMERO ASIGNADO</span>
-        <div class="ticket-number-hero" id="assigned-ticket-display">#105</div>
+        <div class="ticket-number-hero" id="assigned-ticket-display">#001</div>
         <div class="ticket-footer-hint">
           <span class="ticket-hint-dot"></span>
           <span>Te llamaremos con este número cuando tu orden esté lista</span>
@@ -1157,7 +1157,7 @@
 
   <!-- STORE AND SCRIPT LOGIC -->
   <script type="module">
-    import { AtoyacStore } from './js/store.js';
+    import { AtoyacStore, formatTicketNumber } from './js/store.js';
 
     // Global Kiosk State
     window.kioskState = {
@@ -1186,10 +1186,11 @@
       window.kioskState.diningMode = mode;
       window.kioskState.cart = [];
 
-      // Asignar automáticamente el número de pedido en lugar de pedir nombre
-      const nextTicket = AtoyacStore.getNextTicketNumber ? AtoyacStore.getNextTicketNumber() : 101;
+      // Asignar automáticamente el número de pedido correlativo de la jornada (#001, #002...)
+      const nextTicket = AtoyacStore.getNextTicketNumber ? AtoyacStore.getNextTicketNumber() : 1;
+      const formatted = formatTicketNumber ? formatTicketNumber(nextTicket) : `#${String(nextTicket).padStart(3, '0')}`;
       window.kioskState.ticketNumber = nextTicket;
-      window.kioskState.customerName = `Pedido #${nextTicket}`;
+      window.kioskState.customerName = `Pedido ${formatted}`;
 
       const isBarra = mode === 'barra';
       const modeLabel = isBarra ? 'Comer en Barra' : 'Para Llevar';
@@ -1197,19 +1198,20 @@
       if (modeEl) modeEl.textContent = modeLabel;
 
       const displayEl = document.getElementById('assigned-ticket-display');
-      if (displayEl) displayEl.textContent = `#${nextTicket}`;
+      if (displayEl) displayEl.textContent = formatted;
 
       showScreen('screen-name');
     };
 
     // 2. CONFIRMAR NÚMERO Y CONTINUAR AL MENÚ
     window.confirmName = function() {
-      const ticketNum = window.kioskState.ticketNumber || 101;
+      const ticketNum = window.kioskState.ticketNumber || 1;
+      const formatted = formatTicketNumber ? formatTicketNumber(ticketNum) : `#${String(ticketNum).padStart(3, '0')}`;
       const isBarra = window.kioskState.diningMode === 'barra';
       const modeLabel = isBarra ? 'Comer en Barra' : 'Para Llevar';
 
       document.getElementById('badge-dining-mode').textContent = modeLabel;
-      document.getElementById('menu-client-greeting').textContent = `PEDIDO #${ticketNum}`;
+      document.getElementById('menu-client-greeting').textContent = `PEDIDO ${formatted}`;
       document.getElementById('menu-headline-question').textContent = isBarra 
         ? 'Dime, ¿qué te preparamos hoy?' 
         : 'Dime, ¿qué quieres llevar hoy?';
@@ -1584,7 +1586,7 @@
       // Add to store
       const created = AtoyacStore.addOrder({
         ticketNumber: state.ticketNumber,
-        customerName: state.customerName || `Pedido #${state.ticketNumber}`,
+        customerName: state.customerName,
         source: 'Kiosco iPad',
         orderType: isBarra ? 'Comer en Barra' : 'Para Llevar',
         paymentMethod: 'Tarjeta (Terminal POS)',
@@ -1597,17 +1599,18 @@
 
       // Show confirmation screen
       const finalTicket = created.ticketNumber || state.ticketNumber;
-      document.getElementById('confirm-ticket-number').textContent = `Pedido #${finalTicket}`;
+      const formatted = formatTicketNumber ? formatTicketNumber(finalTicket) : `#${String(finalTicket).padStart(3, '0')}`;
+      document.getElementById('confirm-ticket-number').textContent = `Pedido ${formatted}`;
 
       // Confirmation instructions referencing the assigned ticket number
       if (!isBarra) {
         // PARA LLEVAR:
         document.getElementById('confirm-main-instruction').innerHTML = 
-          `Tu pedido fue preparado para llevar.<br /><strong>Recógelo en barra al escuchar tu número: Pedido #${finalTicket}.</strong>`;
+          `Tu pedido fue preparado para llevar.<br /><strong>Recógelo en barra al escuchar tu número: Pedido ${formatted}.</strong>`;
       } else {
         // COMER EN BARRA:
         document.getElementById('confirm-main-instruction').innerHTML = 
-          `Tu pedido es para comer aquí.<br /><strong>Toma asiento en la barra y te buscaremos con tu número: Pedido #${finalTicket}.</strong>`;
+          `Tu pedido es para comer aquí.<br /><strong>Toma asiento en la barra y te buscaremos con tu número: Pedido ${formatted}.</strong>`;
       }
 
       // Recap list

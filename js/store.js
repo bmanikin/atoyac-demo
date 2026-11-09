@@ -539,8 +539,8 @@ function createSeedOrders() {
   const now = Date.now();
   return [
     {
-      id: "ORD-101",
-      ticketNumber: 101,
+      id: "ORD-001",
+      ticketNumber: 1,
       customerName: "Mariana G.",
       source: "Kiosco iPad",
       orderType: "Para llevar (Barra)",
@@ -555,8 +555,8 @@ function createSeedOrders() {
       total: 94
     },
     {
-      id: "ORD-102",
-      ticketNumber: 102,
+      id: "ORD-002",
+      ticketNumber: 2,
       customerName: "Carlos R.",
       source: "Mostrador POS",
       orderType: "Para llevar",
@@ -571,8 +571,8 @@ function createSeedOrders() {
       total: 94
     },
     {
-      id: "ORD-103",
-      ticketNumber: 103,
+      id: "ORD-003",
+      ticketNumber: 3,
       customerName: "Sofía M. (Oficina Uxmal)",
       source: "Delivery Web",
       orderType: "Pick-up en Tienda",
@@ -588,8 +588,8 @@ function createSeedOrders() {
       total: 169
     },
     {
-      id: "ORD-104",
-      ticketNumber: 104,
+      id: "ORD-004",
+      ticketNumber: 4,
       customerName: "Alejandro T.",
       source: "Kiosco iPad",
       orderType: "En barra",
@@ -608,11 +608,11 @@ function createSeedOrders() {
       netRevenue: 134
     },
     {
-      id: "ORD-105",
-      ticketNumber: 105,
+      id: "ORD-005",
+      ticketNumber: 5,
       customerName: "Valeria P. · Uber Eats",
       source: "Uber Eats",
-      platformOrderId: "UB-8941",
+      platformOrderId: "UB-005",
       driverPin: "PIN #4892",
       orderType: "Delivery Plataforma (Repartidor)",
       paymentMethod: "Uber Pay (Digital)",
@@ -631,11 +631,11 @@ function createSeedOrders() {
       notes: "Sello inviolable Uber Eats aplicado"
     },
     {
-      id: "ORD-106",
-      ticketNumber: 106,
+      id: "ORD-006",
+      ticketNumber: 6,
       customerName: "Rodrigo M. · Rappi",
       source: "Rappi",
-      platformOrderId: "RP-2270",
+      platformOrderId: "RP-006",
       driverPin: "PIN #7821",
       orderType: "Delivery Plataforma (Repartidor)",
       paymentMethod: "Rappi Pay",
@@ -654,11 +654,11 @@ function createSeedOrders() {
       notes: "Bolsa kraft biodegradable sellada"
     },
     {
-      id: "ORD-107",
-      ticketNumber: 107,
+      id: "ORD-007",
+      ticketNumber: 7,
       customerName: "Fernanda S. · DiDi Food",
       source: "DiDi Food",
-      platformOrderId: "DD-3044",
+      platformOrderId: "DD-007",
       driverPin: "Código #5502",
       orderType: "Delivery Plataforma (Repartidor)",
       paymentMethod: "DiDi Pay",
@@ -698,16 +698,33 @@ export const AtoyacStore = {
     this.notify("orders_updated");
   },
 
+  isSameDay(d1, d2) {
+    const date1 = new Date(d1);
+    const date2 = new Date(d2);
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  },
+
   getNextTicketNumber() {
     const orders = this.getOrders();
-    return orders.length > 0 ? Math.max(...orders.map(o => o.ticketNumber || 100)) + 1 : 101;
+    const now = new Date();
+    // Filtra las órdenes que corresponden a la jornada de hoy
+    const todayOrders = orders.filter(o => this.isSameDay(o.createdAt || Date.now(), now));
+    if (todayOrders.length === 0) return 1;
+    const ticketNums = todayOrders.map(o => parseInt(o.ticketNumber, 10)).filter(n => !isNaN(n));
+    return ticketNums.length > 0 ? Math.max(...ticketNums) + 1 : 1;
   },
 
   addOrder(orderData) {
     const orders = this.getOrders();
     const nextTicket = orderData.ticketNumber
       ? Number(orderData.ticketNumber)
-      : (orders.length > 0 ? Math.max(...orders.map(o => o.ticketNumber || 100)) + 1 : 101);
+      : this.getNextTicketNumber();
+    const formattedTicket = formatTicketNumber(nextTicket);
+
     const currentHour = new Date().getHours() + new Date().getMinutes() / 60;
     let detectedMoment = "mediodia";
     if (currentHour < 11.5) detectedMoment = "amanecer";
@@ -725,13 +742,13 @@ export const AtoyacStore = {
     const netRevenue = total - commissionAmount;
 
     const newOrder = {
-      id: `ORD-${nextTicket}`,
+      id: `ORD-${String(nextTicket).padStart(3, '0')}`,
       ticketNumber: nextTicket,
-      customerName: orderData.customerName || `Pedido #${nextTicket}`,
+      customerName: orderData.customerName || `Pedido ${formattedTicket}`,
       customerPhone: orderData.customerPhone || "",
       customerAddress: orderData.customerAddress || "",
       source: source,
-      platformOrderId: orderData.platformOrderId || (source === "Uber Eats" ? `UB-${nextTicket}` : source === "Rappi" ? `RP-${nextTicket}` : source === "DiDi Food" ? `DD-${nextTicket}` : ""),
+      platformOrderId: orderData.platformOrderId || (source === "Uber Eats" ? `UB-${formattedTicket}` : source === "Rappi" ? `RP-${formattedTicket}` : source === "DiDi Food" ? `DD-${formattedTicket}` : ""),
       driverPin: orderData.driverPin || "",
       orderType: orderData.orderType || (["Uber Eats", "Rappi", "DiDi Food"].includes(source) ? "Delivery Plataforma (Repartidor)" : "Para llevar"),
       paymentMethod: orderData.paymentMethod || (["Uber Eats", "Rappi", "DiDi Food"].includes(source) ? `${source} Pay` : "Efectivo"),
@@ -874,7 +891,8 @@ export const AtoyacStore = {
     const now = Date.now();
 
     for (let i = 1; i <= targetCount; i++) {
-      const ticketNum = 200 + i;
+      const ticketNum = i;
+      const formatted = formatTicketNumber(ticketNum);
       let moment = "amanecer";
       let itemPool = MENU_ITEMS.filter(m => m.category === "amanecer");
       if (i > 13 && i <= 27) {
@@ -891,7 +909,7 @@ export const AtoyacStore = {
       const total = chosen.price + extraPrice;
 
       orders.unshift({
-        id: `ORD-${ticketNum}`,
+        id: `ORD-${String(ticketNum).padStart(3, '0')}`,
         ticketNumber: ticketNum,
         customerName: names[i % names.length],
         source: sources[i % sources.length],
@@ -939,6 +957,11 @@ export const AtoyacStore = {
     window.addEventListener("storage", () => callback({ type: "storage_external" }));
   }
 };
+
+export function formatTicketNumber(num) {
+  const n = parseInt(num, 10) || 1;
+  return `#${String(n).padStart(3, '0')}`;
+}
 
 export function getActiveMomentByClock() {
   const now = new Date();

@@ -978,7 +978,7 @@
   </div>
 
   <script type="module">
-    import { MENU_ITEMS, MOMENTS, AtoyacStore, formatMXN } from './js/store.js';
+    import { MENU_ITEMS, MOMENTS, AtoyacStore, formatMXN, formatTicketNumber } from './js/store.js';
 
     /* ======================================================================
        1. LOGIN GATE AUTHENTICATION
@@ -1179,7 +1179,7 @@
         const subInfo = o.driverPin || o.platformOrderId || '';
         return `
         <tr>
-          <td><strong>#${o.ticketNumber}</strong></td>
+          <td><strong>${formatTicketNumber(o.ticketNumber)}</strong></td>
           <td>
             <strong>${o.customerName}</strong>
             ${subInfo ? `<br/><span style="font-size:0.74rem; color:var(--text-muted); font-weight:600;">${subInfo}</span>` : ''}
@@ -1219,7 +1219,7 @@
           return `
           <div class="kds-ticket status-${o.status}" style="${isApp ? `box-shadow: 0 4px 14px rgba(0,0,0,0.1); border-left-width: 5px; border-left-color: ${appBorderColor};` : ''}">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem; flex-wrap:wrap; gap:0.25rem;">
-              <strong style="font-family:var(--font-display); font-size:1.05rem;">#${o.ticketNumber} · ${o.customerName}</strong>
+              <strong style="font-family:var(--font-display); font-size:1.05rem;">${formatTicketNumber(o.ticketNumber)} · ${o.customerName}</strong>
               ${getSourceBadge(o.source)}
             </div>
 
