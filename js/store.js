@@ -27,6 +27,63 @@ export const BUSINESS_INFO = {
   }
 };
 
+export const DELIVERY_PLATFORMS = {
+  uber: {
+    id: "uber",
+    name: "Uber Eats",
+    commissionRate: 0.28,
+    color: "#06C167",
+    textColor: "#ffffff",
+    badgeClass: "badge-uber",
+    description: "Plataforma Uber Eats · Margen comisión est. ~28%"
+  },
+  rappi: {
+    id: "rappi",
+    name: "Rappi",
+    commissionRate: 0.28,
+    color: "#FF441F",
+    textColor: "#ffffff",
+    badgeClass: "badge-rappi",
+    description: "Plataforma Rappi Aliados · Margen comisión est. ~28%"
+  },
+  didi: {
+    id: "didi",
+    name: "DiDi Food",
+    commissionRate: 0.24,
+    color: "#FF7700",
+    textColor: "#ffffff",
+    badgeClass: "badge-didi",
+    description: "Plataforma DiDi Food · Margen comisión est. ~24%"
+  },
+  web: {
+    id: "web",
+    name: "Delivery Web",
+    commissionRate: 0.00,
+    color: "#526f5c",
+    textColor: "#ffffff",
+    badgeClass: "badge-web",
+    description: "Canal Web Propio · 100% íntegro (0% comisión)"
+  },
+  kiosk: {
+    id: "kiosk",
+    name: "Kiosco iPad",
+    commissionRate: 0.00,
+    color: "#c15c3d",
+    textColor: "#ffffff",
+    badgeClass: "badge-kiosk",
+    description: "Autoservicio en sucursal (0% comisión)"
+  },
+  pos: {
+    id: "pos",
+    name: "Mostrador POS",
+    commissionRate: 0.00,
+    color: "#d4a359",
+    textColor: "#19221c",
+    badgeClass: "badge-pos",
+    description: "Venta directa en caja (0% comisión)"
+  }
+};
+
 export const MOMENTS = {
   amanecer: {
     id: "amanecer",
@@ -545,7 +602,78 @@ function createSeedOrders() {
         { id: "bag-pechuga", name: "Baguette de Pechuga", qty: 1, unitPrice: 89, extras: ["Doble proteína"], notes: "Bien dorada la baguette" },
         { id: "agua-fresca-500", name: "Agua Fresca del Día (500 ml)", qty: 1, unitPrice: 25, extras: [], notes: "Sabor pepino-limón" }
       ],
-      total: 134
+      total: 134,
+      commissionRate: 0,
+      commissionAmount: 0,
+      netRevenue: 134
+    },
+    {
+      id: "ORD-105",
+      ticketNumber: 105,
+      customerName: "Valeria P. · Uber Eats",
+      source: "Uber Eats",
+      platformOrderId: "UB-8941",
+      driverPin: "PIN #4892",
+      orderType: "Delivery Plataforma (Repartidor)",
+      paymentMethod: "Uber Pay (Digital)",
+      paymentStatus: "Pagado por App",
+      status: "nuevo",
+      moment: "mediodia",
+      createdAt: now - 1000 * 60 * 5,
+      items: [
+        { id: "combo-mediodia", name: "Combo Mediodía (Baguette Jamón Serrano + Jamaica)", qty: 1, unitPrice: 119, extras: ["Aguacate extra (40g)"], notes: "Empaque térmico para repartidor" },
+        { id: "cold-brew", name: "Cold Brew de la Casa 350 ml", qty: 1, unitPrice: 50, extras: [], notes: "Tapa antiderrames sellada" }
+      ],
+      total: 184,
+      commissionRate: 0.28,
+      commissionAmount: 52,
+      netRevenue: 132,
+      notes: "Sello inviolable Uber Eats aplicado"
+    },
+    {
+      id: "ORD-106",
+      ticketNumber: 106,
+      customerName: "Rodrigo M. · Rappi",
+      source: "Rappi",
+      platformOrderId: "RP-2270",
+      driverPin: "PIN #7821",
+      orderType: "Delivery Plataforma (Repartidor)",
+      paymentMethod: "Rappi Pay",
+      paymentStatus: "Pagado por App",
+      status: "preparando",
+      moment: "mediodia",
+      createdAt: now - 1000 * 60 * 12,
+      items: [
+        { id: "crepa-pavo", name: "Crepa Salada Pechuga y Gouda", qty: 1, unitPrice: 79, extras: ["Queso de cabra extra"], notes: "" },
+        { id: "jugo-antiox", name: "Jugo Antioxidante 500 ml", qty: 1, unitPrice: 48, extras: [], notes: "" }
+      ],
+      total: 147,
+      commissionRate: 0.28,
+      commissionAmount: 41,
+      netRevenue: 106,
+      notes: "Bolsa kraft biodegradable sellada"
+    },
+    {
+      id: "ORD-107",
+      ticketNumber: 107,
+      customerName: "Fernanda S. · DiDi Food",
+      source: "DiDi Food",
+      platformOrderId: "DD-3044",
+      driverPin: "Código #5502",
+      orderType: "Delivery Plataforma (Repartidor)",
+      paymentMethod: "DiDi Pay",
+      paymentStatus: "Pagado por App",
+      status: "listo",
+      moment: "mediodia",
+      createdAt: now - 1000 * 60 * 18,
+      items: [
+        { id: "combo-amanecer-atoyac", name: "Combo Amanecer (Atoyac)", qty: 1, unitPrice: 94, extras: [], notes: "Cliente pidió servilletas extra" }
+      ],
+      total: 94,
+      commissionRate: 0.24,
+      commissionAmount: 23,
+      netRevenue: 71,
+      notes: "Listo en repisa de entrega para repartidor DiDi"
     }
   ];
 }
@@ -585,21 +713,37 @@ export const AtoyacStore = {
     if (currentHour < 11.5) detectedMoment = "amanecer";
     else if (currentHour >= 16.5) detectedMoment = "tarde";
 
+    const source = orderData.source || "Kiosco iPad";
+    let commissionRate = 0;
+    if (source === "Uber Eats") commissionRate = 0.28;
+    else if (source === "Rappi") commissionRate = 0.28;
+    else if (source === "DiDi Food") commissionRate = 0.24;
+    else if (typeof orderData.commissionRate === "number") commissionRate = orderData.commissionRate;
+
+    const total = orderData.total || 0;
+    const commissionAmount = Math.round(total * commissionRate);
+    const netRevenue = total - commissionAmount;
+
     const newOrder = {
       id: `ORD-${nextTicket}`,
       ticketNumber: nextTicket,
       customerName: orderData.customerName || `Pedido #${nextTicket}`,
       customerPhone: orderData.customerPhone || "",
       customerAddress: orderData.customerAddress || "",
-      source: orderData.source || "Kiosco iPad",
-      orderType: orderData.orderType || "Para llevar",
-      paymentMethod: orderData.paymentMethod || "Efectivo",
-      paymentStatus: orderData.paymentStatus || "Pendiente cobro",
+      source: source,
+      platformOrderId: orderData.platformOrderId || (source === "Uber Eats" ? `UB-${nextTicket}` : source === "Rappi" ? `RP-${nextTicket}` : source === "DiDi Food" ? `DD-${nextTicket}` : ""),
+      driverPin: orderData.driverPin || "",
+      orderType: orderData.orderType || (["Uber Eats", "Rappi", "DiDi Food"].includes(source) ? "Delivery Plataforma (Repartidor)" : "Para llevar"),
+      paymentMethod: orderData.paymentMethod || (["Uber Eats", "Rappi", "DiDi Food"].includes(source) ? `${source} Pay` : "Efectivo"),
+      paymentStatus: orderData.paymentStatus || (["Uber Eats", "Rappi", "DiDi Food"].includes(source) ? "Pagado por App" : "Pendiente cobro"),
       status: orderData.status || "nuevo", // nuevo -> preparando -> listo -> entregado
       moment: orderData.moment || detectedMoment,
       createdAt: Date.now(),
       items: orderData.items || [],
-      total: orderData.total || 0,
+      total: total,
+      commissionRate: commissionRate,
+      commissionAmount: commissionAmount,
+      netRevenue: netRevenue,
       notes: orderData.notes || ""
     };
 

@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administración & ERP Operativo | ATOYAC</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body {
+      background: var(--bg-sand);
+      min-height: 100vh;
+    }
+
+    /* ===================================================================
+       1. LOGIN GATE OVERLAY (USUARIO Y CONTRASEÑA)
+       =================================================================== */
+    .login-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: var(--forest-dark);
+      color: var(--bg-sand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .login-gate.authenticated {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .login-card {
+      background: var(--bg-cream);
+      color: var(--forest-dark);
+      width: 100%;
+      max-width: 430px;
+      border-radius: 22px;
+      padding: 2.5rem 2.25rem;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .role-pills {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.45rem;
+      margin-bottom: 1.35rem;
+    }
+
+    .role-pill-btn {
+      padding: 0.45rem 0.5rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(37, 51, 41, 0.16);
+      background: var(--bg-white);
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .role-pill-btn:hover, .role-pill-btn.active {
+      background: var(--forest-dark);
+      color: var(--bg-sand);
+      border-color: var(--forest-dark);
+    }
+
+    /* ===================================================================
+       2. ERP SIDEBAR + MAIN SHELL
+       =================================================================== */
+    .erp-shell {
+      display: grid;
+      grid-template-columns: 265px 1fr;
+      min-height: 100vh;
+    }
+
+    .erp-sidebar {
+      background: var(--forest-dark);
+      color: var(--bg-sand);
+      padding: 1.5rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .erp-nav-group-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(239, 236, 230, 0.45);
+      font-weight: 600;
+      margin: 1.1rem 0 0.45rem 0.65rem;
+    }
+
+    .erp-nav-btn {
+      width: 100%;
+      text-align: left;
+      padding: 0.72rem 0.9rem;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: rgba(239, 236, 230, 0.82);
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.2rem;
+      transition: all 0.18s ease;
+    }
+
+    .erp-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .erp-nav-btn.active {
+      background: var(--bg-sand);
+      color: var(--forest-dark);
+      font-weight: 600;
+    }
+
+    .erp-main {
+      padding: 2rem 2.5rem 4rem;
+      min-width: 0;
+    }
+
+    .erp-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-bottom: 1.35rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .erp-pane {
+      display: none;
+    }
+
+    .erp-pane.active {
+      display: block;
+    }
+
+    /* KPI & Analytics Cards */
+    .kpi-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-md);
+      padding: 1.35rem;
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--forest-dark);
+    }
+
+    .kpi-value {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--forest-dark);
+      line-height: 1.1;
+      margin: 0.35rem 0;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: var(--bg-sand);
+      border-radius: 99px;
+      overflow: hidden;
+      margin: 0.55rem 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--sage-green);
+      border-radius: 99px;
+      transition: width 0.35s ease;
+    }
+
+    /* KDS Kanban Board */
+    .kds-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    .kds-column {
+      background: var(--bg-cream);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-strong);
+      padding: 1rem;
+      min-height: 480px;
+    }
+
+    .kds-ticket {
+      background: var(--bg-white);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      margin-bottom: 0.85rem;
+      border-left: 4px solid var(--forest-dark);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kds-ticket.status-nuevo { border-left-color: var(--terracotta); }
+    .kds-ticket.status-preparando { border-left-color: var(--warm-ochre); }
+    .kds-ticket.status-listo { border-left-color: var(--status-ok); }
+
+    /* POS Quick Grid */
+    .pos-layout {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .pos-quick-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+      gap: 0.7rem;
+    }
+
+    .pos-item-btn {
+      background: var(--bg-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.8rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.4rem;
+    }
+
+    .pos-item-btn:hover {
+      border-color: var(--forest-dark);
+    }
+
+    /* Badges de Plataformas de Delivery */
+    .badge-uber {
+      background: #101010 !important;
+      color: #06C167 !important;
+      border: 1px solid rgba(6, 193, 103, 0.4) !important;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .badge-rappi {
+      background: #FF441F !important;
+      color: #ffffff !important;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .badge-didi {
+      background: #FF7700 !important;
+      color: #ffffff !important;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .badge-web {
+      background: var(--forest-dark) !important;
+      color: #ffffff !important;
+      font-weight: 600;
+    }
+    .badge-kiosk {
+      background: var(--terracotta) !important;
+      color: #ffffff !important;
+      font-weight: 600;
+    }
+    .badge-pos {
+      background: var(--warm-ochre) !important;
+      color: #19221c !important;
+      font-weight: 600;
+    }
+
+    /* Modal Rápido de Registro de App */
+    .app-order-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 600;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .app-order-modal-backdrop.open {
+      display: flex;
+    }
+    .app-order-modal-box {
+      background: var(--bg-cream);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      border: 1px solid var(--border-subtle);
+    }
+
+    @media (max-width: 1024px) {
+      .erp-shell { grid-template-columns: 1fr; }
+      .erp-sidebar { position: static; height: auto; }
+      .kds-board, .pos-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =====================================================================
+       PANTALLA DE ACCESO CON USUARIO Y CONTRASEÑA (ADMINISTRACIÓN)
+       ===================================================================== -->
+  <section class="login-gate" id="login-gate">
+    <div class="login-card">
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <img src="assets/img/logo.svg" alt="ATOYAC" style="height: 48px; margin-bottom: 0.5rem;" />
+        <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--sage-green); font-weight: 600;">
+          Portal de Administración y Operación
+        </div>
+        <h1 style="font-size: 1.55rem; font-weight: 500; margin-top: 0.25rem;">Iniciar Sesión</h1>
+      </div>
+
+      <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.45rem; font-weight: 500;">
+        Acceso rápido por perfil (autocompletar):
+      </div>
+      <div class="role-pills">
+        <button type="button" class="role-pill-btn active" data-user="admin@atoyac.mx" data-pass="atoyac2026" data-role="Dirección General">Dirección</button>
+        <button type="button" class="role-pill-btn" data-user="caja@atoyac.mx" data-pass="caja1400" data-role="Caja & Turno">Caja (POS)</button>
+        <button type="button" class="role-pill-btn" data-user="cocina@atoyac.mx" data-pass="barra289" data-role="Barra & Cocina">Cocina (KDS)</button>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-user">Usuario / Correo</label>
+          <input type="text" id="login-user" class="form-input" value="admin@atoyac.mx" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-pass">Contraseña</label>
+          <input type="password" id="login-pass" class="form-input" value="atoyac2026" required />
+        </div>
+
+        <div id="login-error" style="display: none; color: var(--status-danger); font-size: 0.82rem; margin-bottom: 0.75rem;">
+          Credenciales incorrectas. Intenta con admin@atoyac.mx / atoyac2026
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.35rem;">
+          Entrar al Panel Administrativo →
+        </button>
+      </form>
+
+      <div style="margin-top: 1.25rem; text-align: center; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
+        <a href="/" style="font-size: 0.82rem; color: var(--text-muted);">← Volver a la página pública de ATOYAC</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       PANEL BACKOFFICE ERP COMPLETO (7 MÓDULOS OPERATIVOS)
+       ===================================================================== -->
+  <div class="erp-shell">
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="erp-sidebar">
+      <div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.12);">
+          <div>
+            <div style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; letter-spacing: 0.14em; color: #fff;">ATOYAC</div>
+            <div style="font-size: 0.65rem; color: var(--warm-ochre); letter-spacing: 0.12em;" id="current-user-role">DIRECCIÓN GENERAL</div>
+          </div>
+          <span class="badge badge-live"><span class="live-dot"></span> Vivo</span>
+        </div>
+
+        <div class="erp-nav-group-label">Canales Digitales & Venta</div>
+        <button class="erp-nav-btn active" data-pane="web0">
+          <span>Canales Digitales & Apps</span>
+          <span class="badge" style="background: rgba(255,255,255,0.15); color: #fff;" id="nav-count-web">0</span>
+        </button>
+        <button class="erp-nav-btn" data-pane="kds">
+          <span>Monitor Cocina (KDS)</span>
+          <span class="badge" style="background: var(--terracotta); color: #fff;" id="nav-count-kds">0</span>
+        </button>
+        <button class="erp-nav-btn" data-pane="pos">
+          <span>Caja & Cortes (14h/21h)</span>
+        </button>
+
+        <div class="erp-nav-group-label">Administración & Negocio</div>
+        <button class="erp-nav-btn" data-pane="finanzas">
+          <span>Finanzas (Meta 31/40)</span>
+        </button>
+        <button class="erp-nav-btn" data-pane="rrhh">
+          <span>Recursos Humanos</span>
+        </button>
+        <button class="erp-nav-btn" data-pane="sucursal">
+          <span>Tienda / Sucursal 289</span>
+        </button>
+        <button class="erp-nav-btn" data-pane="insumos">
+          <span>Insumos, Recetas y Merma</span>
+        </button>
+      </div>
+
+      <div style="border-top: 1px solid rgba(255,255,255,0.12); padding-top: 1rem; display: flex; flex-direction: column; gap: 0.45rem;">
+        <a href="kiosco.html" target="_blank" class="btn btn-sm" style="background: rgba(255,255,255,0.1); color: #fff; justify-content: flex-start;">
+          Abrir iPad Kiosco
+        </a>
+        <a href="delivery.html" target="_blank" class="btn btn-sm" style="background: rgba(255,255,255,0.1); color: #fff; justify-content: flex-start;">
+          Abrir Página Delivery
+        </a>
+        <button id="logout-btn" class="btn btn-sm" style="background: rgba(201, 59, 59, 0.25); color: #ffd6d6; margin-top: 0.25rem;">
+          Cerrar Sesión
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="erp-main">
+      <header class="erp-topbar">
+        <div>
+          <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--sage-green); font-weight: 600;">
+            Backoffice Integral · Av. Popocatépetl 289, Local A
+          </span>
+          <h1 style="font-size: 1.75rem; font-weight: 500; color: var(--forest-dark);" id="erp-page-title">
+            Dashboard de Pedidos Web (0% Comisiones), Pick-up y Delivery
+          </h1>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button id="sim-34-btn" class="btn btn-outline btn-sm">Simular Día Equilibrio (34 ventas)</button>
+          <button id="sim-42-btn" class="btn btn-primary btn-sm">Simular Día Meta (42 ventas)</button>
+          <button id="reset-seed-btn" class="btn btn-ghost btn-sm">Restaurar Base</button>
+        </div>
+      </header>
+
+      <!-- =================================================================
+           MÓDULO 1: CANALES DIGITALES (WEB 0% + APPS: UBER EATS, RAPPI Y DIDI FOOD)
+           ================================================================= -->
+      <section class="erp-pane active" id="pane-web0">
+        <div class="grid-4" style="margin-bottom: 1.75rem;">
+          <div class="kpi-card">
+            <span style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Venta Web Directa (0% Comisión)</span>
+            <div class="kpi-value" id="web-kpi-count">0</div>
+            <span style="font-size: 0.78rem; color: var(--text-muted);" id="web-kpi-Split">Pick-up en Barra vs Entrega Local</span>
+          </div>
+
+          <div class="kpi-card" style="border-left-color: var(--sage-green);">
+            <span style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Pedidos en Apps Delivery</span>
+            <div class="kpi-value" id="apps-kpi-count">0</div>
+            <span style="font-size: 0.78rem; color: var(--text-muted);" id="apps-kpi-breakdown">Uber Eats · Rappi · DiDi Food</span>
+          </div>
+
+          <div class="kpi-card" style="border-left-color: var(--warm-ochre);">
+            <span style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Venta Total Plataformas</span>
+            <div class="kpi-value" id="apps-kpi-gross">$0</div>
+            <span style="font-size: 0.78rem; color: var(--text-muted);" id="apps-kpi-net">Neto estimado después de comisión</span>
+          </div>
+
+          <div class="kpi-card" style="border-left-color: var(--status-ok);">
+            <span style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Comisiones Ahorradas en Web/Kiosco</span>
+            <div class="kpi-value" style="color: var(--status-ok);" id="web-kpi-saved">$0</div>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Margen 100% íntegro para ATOYAC</span>
+          </div>
+        </div>
+
+        <div class="grid-2" style="gap: 1.5rem; margin-bottom: 1.75rem;">
+          <div class="card card-white">
+            <span class="eyebrow">Desglose por Canal & Plataforma</span>
+            <h3 style="font-size: 1.25rem; font-weight: 500; margin-bottom: 1rem;">Mix de Canales: Web Propia, iPad, Mostrador y Apps</h3>
+            <div id="channel-breakdown-bars" style="display: flex; flex-direction: column; gap: 0.85rem;"></div>
+          </div>
+
+          <div class="card card-white">
+            <span class="eyebrow">Comparativa Financiera & Rentabilidad</span>
+            <h3 style="font-size: 1.25rem; font-weight: 500; margin-bottom: 0.75rem;">Canal Directo (0%) vs. Plataformas (24%–28%)</h3>
+            <p style="font-size: 0.86rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Las plataformas (Uber Eats, Rappi, DiDi Food) captan nuevos clientes en la zona Benito Juárez/Coyoacán, mientras que la web propia fideliza con 0% de comisión.
+            </p>
+            <div id="extras-analytics-box"></div>
+          </div>
+        </div>
+
+        <div class="card card-white">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <h3 style="font-size: 1.2rem; font-weight: 500;">Bitácora Unificada de Pedidos (Web + Apps + Kiosco + Mostrador)</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Actualizado en tiempo real con estados de preparación y entrega</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button id="btn-open-app-modal-tab" class="btn btn-outline btn-sm">+ Registrar Pedido App Manual</button>
+              <a href="delivery.html" target="_blank" class="btn btn-primary btn-sm">+ Pedido Web Directo</a>
+            </div>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Ticket</th>
+                  <th>Cliente / PIN</th>
+                  <th>Canal</th>
+                  <th>Modalidad de Entrega</th>
+                  <th>Productos & Extras</th>
+                  <th>Total / Comisión</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="digital-orders-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           MÓDULO 2: MONITOR DE COCINA / ÓRDENES DE PREPARACIÓN (KDS)
+           ================================================================= -->
+      <section class="erp-pane" id="pane-kds">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+          <p style="font-size: 0.92rem; color: var(--text-muted); margin: 0;">
+            Órdenes unificadas: <strong>Delivery Web (0%)</strong>, <strong>iPad Kiosco</strong>, <strong>Caja Mostrador</strong> y <strong>Apps (Uber Eats / Rappi / DiDi Food)</strong>.
+          </p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button id="demo-order-btn" class="btn btn-outline btn-sm">+ Pedido Web Directo</button>
+            <button id="demo-app-order-btn" class="btn btn-sm" style="background: #141414; color: #fff; border: 1px solid #333;">+ Simular Pedido App (Uber/Rappi/DiDi)</button>
+            <button id="open-app-modal-btn" class="btn btn-terracotta btn-sm">+ Registrar Pedido App</button>
+          </div>
+        </div>
+
+        <div class="kds-board">
+          <div class="kds-column">
+            <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.85rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-strong);">
+              <span>Nuevas por Preparar</span>
+              <span class="badge" style="background: var(--terracotta); color: #fff;" id="col-count-nuevo">0</span>
+            </div>
+            <div id="kds-list-nuevo"></div>
+          </div>
+
+          <div class="kds-column">
+            <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.85rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-strong);">
+              <span>En Plancha / Crepera</span>
+              <span class="badge badge-amanecer" id="col-count-preparando">0</span>
+            </div>
+            <div id="kds-list-preparando"></div>
+          </div>
+
+          <div class="kds-column">
+            <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.85rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-strong);">
+              <span>Listas para Entregar</span>
+              <span class="badge badge-live" id="col-count-listo">0</span>
+            </div>
+            <div id="kds-list-listo"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           MÓDULO 3: CAJA REGISTRADORA (POS) & DOS CORTES AL DÍA (14:00 Y 21:00)
+           ================================================================= -->
+      <section class="erp-pane" id="pane-pos">
+        <div class="pos-layout">
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+              <h3 style="font-size: 1.15rem; font-weight: 500;">Cobro en Mostrador</h3>
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;" id="pos-cat-filter">
+                <button class="btn btn-primary btn-sm" data-cat="todos">Todos</button>
+                <button class="btn btn-ghost btn-sm" data-cat="combos">Combos</button>
+                <button class="btn btn-ghost btn-sm" data-cat="amanecer">Amanecer</button>
+                <button class="btn btn-ghost btn-sm" data-cat="mediodia">Mediodía</button>
+                <button class="btn btn-ghost btn-sm" data-cat="tarde">Tarde</button>
+                <button class="btn btn-ghost btn-sm" data-cat="bebidas">Bebidas</button>
+              </div>
+            </div>
+            <div class="pos-quick-grid" id="pos-items-grid"></div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div class="card card-white">
+              <h3 style="font-size: 1.15rem; font-weight: 500; margin-bottom: 0.75rem;">Cuenta de Mostrador</h3>
+              <div id="pos-current-ticket" style="min-height: 110px; max-height: 220px; overflow-y: auto; margin-bottom: 0.85rem; display: flex; flex-direction: column; gap: 0.45rem;"></div>
+
+              <div class="grid-2" style="gap: 0.6rem; margin-bottom: 0.75rem;">
+                <input type="text" id="pos-cust-name" class="form-input" placeholder="Nombre cliente" />
+                <select id="pos-pay-method" class="form-select">
+                  <option value="Efectivo">Efectivo</option>
+                  <option value="Tarjeta">Terminal Tarjeta</option>
+                  <option value="Transferencia">Transferencia</option>
+                </select>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 0.6rem 0; border-top: 1px solid var(--border-subtle);">
+                <span style="font-weight: 500;">Total a Cobrar:</span>
+                <span style="font-family: var(--font-display); font-size: 1.7rem; font-weight: 600;" id="pos-ticket-total">$0</span>
+              </div>
+
+              <div style="display: flex; gap: 0.5rem;">
+                <button id="pos-clear-btn" class="btn btn-ghost" style="flex: 1;">Limpiar</button>
+                <button id="pos-charge-btn" class="btn btn-terracotta" style="flex: 2;">Cobrar y Enviar a Barra →</button>
+              </div>
+            </div>
+
+            <div class="card card-white">
+              <span class="eyebrow">Control de Efectivo (Fondo inicial: $500)</span>
+              <h3 style="font-size: 1.15rem; font-weight: 500; margin-bottom: 0.65rem;">Cortes de Caja Oficiales (14:00 y 21:00)</h3>
+              <form id="cash-cut-form">
+                <div class="form-group">
+                  <select id="cut-shift" class="form-select">
+                    <option value="14:00 · Cambio de Turno (Mañana → Tarde)">14:00 · Cambio de Turno (Mañana → Tarde)</option>
+                    <option value="21:00 · Cierre Final del Día">21:00 · Cierre Final y Depósito</option>
+                  </select>
+                </div>
+                <div class="grid-2" style="gap: 0.6rem;">
+                  <div class="form-group">
+                    <input type="number" id="cut-cash" class="form-input" placeholder="Efectivo contado ($)" required />
+                  </div>
+                  <div class="form-group">
+                    <input type="number" id="cut-card" class="form-input" placeholder="Terminal tarjeta ($)" required />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <input type="text" id="cut-notes" class="form-input" placeholder="Notas o arqueo de insumos" />
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Corte de Turno</button>
+              </form>
+              <div id="cuts-history" style="margin-top: 0.85rem; font-size: 0.8rem;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           MÓDULO 4: FINANZAS Y PUNTO DE EQUILIBRIO (META 31 / 40 TICKETS)
+           ================================================================= -->
+      <section class="erp-pane" id="pane-finanzas">
+        <div class="grid-4" style="margin-bottom: 1.75rem;">
+          <div class="kpi-card">
+            <span style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Tickets Vendidos Hoy</span>
+            <div class="kpi-value" id="kpi-tickets-today">0</div>
+            <div class="progress-track"><div class="progress-fill" id="kpi-tickets-bar" style="width: 0%;"></div></div>
+            <span style="font-size: 0.76rem; color: var(--text-muted);">Equilibrio: 31 · Meta: 40/día</span>
+          </div>
+
+          <div class="kpi-card" style="border-left-color: var(--terracotta);">
+            <span style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Venta Bruta Hoy (c/IVA)</span>
+            <div class="kpi-value" id="kpi-sales-today">$0</div>
+            <span style="font-size: 0.76rem; color: var(--text-muted);">Equilibrio: $2,945 · Meta 40: $3,800</span>
+          </div>
+
+          <div class="kpi-card" style="border-left-color: var(--warm-ochre);">
+            <span style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Ticket Promedio</span>
+            <div class="kpi-value" id="kpi-avg-ticket">$0</div>
+            <span style="font-size: 0.76rem; color: var(--text-muted);">Meta Plan: $95.00 MXN</span>
+          </div>
+
+          <div class="kpi-card" style="border-left-color: var(--status-ok);">
+            <span style="font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Contribución Libre Hoy</span>
+            <div class="kpi-value" id="kpi-contribution-today">$0</div>
+            <span style="font-size: 0.76rem; color: var(--text-muted);">$46.45 libres por cada ticket de $95</span>
+          </div>
+        </div>
+
+        <div class="grid-2" style="gap: 1.5rem; margin-bottom: 1.75rem;">
+          <div class="card card-white">
+            <span class="eyebrow">Ritmo por Momento (16 · 16 · 8)</span>
+            <h3 style="font-size: 1.25rem; font-weight: 500; margin-bottom: 1rem;">Avance Diario contra Meta por Turno</h3>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.88rem; font-weight: 600;">
+                  <span>Amanecer (7:00–11:30)</span>
+                  <span id="mom-stat-amanecer">0 / 16 tickets</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" id="mom-bar-amanecer" style="background: var(--warm-ochre); width: 0%;"></div></div>
+              </div>
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.88rem; font-weight: 600;">
+                  <span>Mediodía (11:30–16:30)</span>
+                  <span id="mom-stat-mediodia">0 / 16 tickets</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" id="mom-bar-mediodia" style="background: var(--sage-green); width: 0%;"></div></div>
+              </div>
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.88rem; font-weight: 600;">
+                  <span>Tarde (16:30–21:00)</span>
+                  <span id="mom-stat-tarde">0 / 8 tickets</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" id="mom-bar-tarde" style="background: var(--terracotta); width: 0%;"></div></div>
+              </div>
+            </div>
+            <div style="margin-top: 1.25rem; padding: 0.9rem; background: var(--bg-sand); border-radius: var(--radius-sm); font-size: 0.84rem;" id="scaling-phase-indicator"></div>
+          </div>
+
+          <div class="card card-white">
+            <span class="eyebrow">Simulador Financiero para Socios</span>
+            <h3 style="font-size: 1.25rem; font-weight: 500; margin-bottom: 0.85rem;">Sensibilidad de Ticket, Ventas y Negociación de Renta</h3>
+            <div class="grid-3" style="gap: 0.65rem; margin-bottom: 1rem;">
+              <div>
+                <label class="form-label">Ventas / Día</label>
+                <input type="number" id="sim-input-tickets" class="form-input" value="40" min="5" max="120" style="width: 100%;" />
+              </div>
+              <div>
+                <label class="form-label">Ticket ($)</label>
+                <input type="number" id="sim-input-avg" class="form-input" value="95" min="50" max="200" style="width: 100%;" />
+              </div>
+              <div>
+                <label class="form-label">Renta (s/IVA)</label>
+                <select id="sim-input-rent" class="form-select" style="width: 100%;">
+                  <option value="16500">Lista: $19,140 c/IVA</option>
+                  <option value="14000">Media: $16,240 c/IVA</option>
+                  <option value="12500">Meta: $14,500 c/IVA</option>
+                </select>
+              </div>
+            </div>
+            <div style="background: var(--bg-cream); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);" id="sim-results-box"></div>
+          </div>
+        </div>
+
+        <div class="card card-white">
+          <span class="eyebrow">Estructura de Gastos Fijos e Inversión ($132,380 Caja Total)</span>
+          <div style="overflow-x: auto; margin-top: 0.6rem;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Concepto Fijo Mensual</th>
+                  <th>Pago con IVA</th>
+                  <th>Sin IVA</th>
+                  <th>Notas del Plan Financiero</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Renta del Local (Av. Popocatépetl 289)</td><td>$19,140</td><td>$16,500</td><td>Límite de pago día 19 de cada mes</td></tr>
+                <tr><td>Sueldo Turno Mañana (6:30–14:00)</td><td>$10,400</td><td>$10,400</td><td>$400 diarios · Lunes a Sábado</td></tr>
+                <tr><td>Cargas Sociales</td><td>$2,600</td><td>$2,600</td><td>Prestaciones e IMSS</td></tr>
+                <tr><td>Luz Comercial (CFE)</td><td>$3,000</td><td>$2,586</td><td>Refrigerador ≤4°C, crepera, panini, cafetera</td></tr>
+                <tr><td>Publicidad Local + Mantenimiento</td><td>$2,500</td><td>$2,155</td><td>Pauta local geolocalizada en Col. Atoyac</td></tr>
+                <tr><td>Agua, Gas, Internet, Limpieza, Fumigación, Contador, POS</td><td>$3,700</td><td>$3,191</td><td>Fumigación mensual obligatoria con comprobante</td></tr>
+                <tr style="font-weight: 700; background: var(--bg-sand);"><td>TOTAL GASTO FIJO MENSUAL</td><td>$41,340</td><td>$37,432</td><td>Punto de equilibrio: 31 tickets/día ($46.45 contribución)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           MÓDULO 5: RECURSOS HUMANOS, ROLES, NÓMINA Y CHECKLISTS DE TURNO
+           ================================================================= -->
+      <section class="erp-pane" id="pane-rrhh">
+        <div class="grid-2" style="gap: 1.5rem; margin-bottom: 1.75rem;">
+          <div class="card card-white">
+            <span class="eyebrow">Turno Mañana · 6:30 a 14:00 hrs</span>
+            <h3 style="font-size: 1.3rem; font-weight: 500; margin-bottom: 0.4rem;">Empleado(a) Operativo de Barra</h3>
+            <p style="font-size: 0.86rem; color: var(--sage-green); font-weight: 600; margin-bottom: 0.85rem;">
+              Lunes a Sábado · $400 diarios ($10,400/mes + $2,600 cargas sociales)
+            </p>
+            <ul style="font-size: 0.88rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.45rem; padding-left: 1.1rem;">
+              <li>Apertura a las 6:30, revisión de refrigerador (≤ 4 °C) y recepción de pan del día.</li>
+              <li>Exprimir tanda 1 de jugo de naranja (6:40) y preparar 2 aguas frescas de 4 L.</li>
+              <li>Dejar 6 sándwiches Clásicos listos para hora pico y mise en place de baguettes a las 11:00.</li>
+              <li>Corte parcial de caja (efectivo + terminal) y entrega de barra limpia a las 14:00.</li>
+            </ul>
+          </div>
+
+          <div class="card card-white">
+            <span class="eyebrow">Turno Tarde · 14:00 a 21:30 hrs</span>
+            <h3 style="font-size: 1.3rem; font-weight: 500; margin-bottom: 0.4rem;">Socio Operador / Dirección</h3>
+            <p style="font-size: 0.86rem; color: var(--terracotta); font-weight: 600; margin-bottom: 0.85rem;">
+              Lunes a Sábado · Sin sueldo en arranque (Ahorro de ~$13,000/mes)
+            </p>
+            <ul style="font-size: 0.88rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.45rem; padding-left: 1.1rem;">
+              <li>Recibe corte de las 14:00, cierra Mediodía y prepara masa de crepas a las 16:00 (rinde ~20).</li>
+              <li>Servicio de Tarde (crepas dulces/saladas y café recién colado cada 2 horas).</li>
+              <li>Corte final 21:00, registro de merma, pedido de pan para mañana y compras/proveedores.</li>
+              <li><strong>Regla de reemplazo:</strong> Se contrata empleado de tarde al superar 70 ventas/día sostenidas (Fase 3).</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 style="font-size: 1.3rem; font-weight: 500; margin-bottom: 1rem;">Checklists Operativos por Hora (Cumplimiento de Turno)</h3>
+        <div class="grid-3" id="checklists-container"></div>
+      </section>
+
+      <!-- =================================================================
+           MÓDULO 6: DATOS DE LA TIENDA / SUCURSAL, CONTRATO Y EQUIPAMIENTO
+           ================================================================= -->
+      <section class="erp-pane" id="pane-sucursal">
+        <div class="grid-2" style="gap: 1.5rem; margin-bottom: 1.75rem;">
+          <div class="card card-white">
+            <span class="eyebrow">Ficha Técnica de la Sucursal</span>
+            <h3 style="font-size: 1.3rem; font-weight: 500; margin-bottom: 1rem;">ATOYAC · Santa Cruz Atoyac</h3>
+            <table class="data-table">
+              <tbody>
+                <tr><td><strong>Dirección Oficial</strong></td><td>Av. Popocatépetl 289, Local A (Eje 8 Sur), Col. Santa Cruz Atoyac, CDMX</td></tr>
+                <tr><td><strong>Referencias</strong></td><td>Cerca de Av. México-Coyoacán y Uxmal</td></tr>
+                <tr><td><strong>Superficie y Layout</strong></td><td>23.7 m², planta baja, frente de vidrio, 1 baño + depa contiguo de apoyo</td></tr>
+                <tr><td><strong>Frente y Fondo</strong></td><td>Frente: caja, barra, iPad Kiosco y exhibición · Fondo (1–2 m): preparación y almacén</td></tr>
+                <tr><td><strong>Uso Permitido</strong></td><td>Alimentos y bebidas sin alcohol, para llevar (Cláusula Tercera)</td></tr>
+                <tr><td><strong>Apertura Oficial</strong></td><td>5 de noviembre de 2026 (Prueba con vecinos: 4 de noviembre)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card card-white">
+            <span class="eyebrow">Control de Contrato y Fechas Críticas</span>
+            <h3 style="font-size: 1.3rem; font-weight: 500; margin-bottom: 1rem;">Obligaciones de Arrendamiento y Permisos</h3>
+            <table class="data-table">
+              <tbody>
+                <tr><td><strong>Plazo Forzoso</strong></td><td>12 meses (15 nov 2026 – 14 nov 2027) · Gracia del 1 al 15 nov</td></tr>
+                <tr><td><strong>Fecha Límite Renta</strong></td><td>Día 19 de cada mes (Moratorios de 0.5% diario)</td></tr>
+                <tr><td><strong>Depósito en Garantía</strong></td><td>$19,140 MXN (Recuperable al entregar en buen estado)</td></tr>
+                <tr><td><strong>Salida Anticipada</strong></td><td>30 días de aviso + pena de $19,140 (Tope de pérdida calculado: ~$38,280)</td></tr>
+                <tr><td><strong>Aviso Renovación</strong></td><td>Avisar antes del 15 de septiembre de 2027</td></tr>
+                <tr><td><strong>Permisos y COFEPRIS</strong></td><td>Aviso de funcionamiento obligatorio antes del 5 de noviembre</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card card-white">
+          <span class="eyebrow">Inversión de Apertura ($71,900 MXN)</span>
+          <h3 style="font-size: 1.25rem; font-weight: 500; margin-bottom: 0.85rem;">Inventario de Equipamiento Móvil e Infraestructura</h3>
+          <div class="grid-4" style="gap: 1rem;">
+            <div style="padding: 1rem; background: var(--bg-sand); border-radius: var(--radius-sm);">
+              <strong>Equipo de Cocina ($36,000)</strong>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.3rem;">Refrigerador (≤4°C), crepera profesional, plancha panini, extractor de jugo, cafetera, microondas, mesa inox y tarja.</p>
+            </div>
+            <div style="padding: 1rem; background: var(--bg-sand); border-radius: var(--radius-sm);">
+              <strong>Insumos y Empaque ($11,000)</strong>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.3rem;">Inventario inicial de abarrotes, bolsas kraft impresas, vasos de 500 ml / 1 L y vasos térmicos de café.</p>
+            </div>
+            <div style="padding: 1rem; background: var(--bg-sand); border-radius: var(--radius-sm);">
+              <strong>Imagen y Fachada ($11,000)</strong>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.3rem;">Letrero exterior iluminado ATOYAC, pintura Sage Green / Sand, viniles y pizarras de menú.</p>
+            </div>
+            <div style="padding: 1rem; background: var(--bg-sand); border-radius: var(--radius-sm);">
+              <strong>POS, Seguridad y Arranque ($13,900)</strong>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.3rem;">Terminal bancaria, soporte iPad Kiosco, utensilios, extintor, botiquín y promoción de lanzamiento.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           MÓDULO 7: INSUMOS, PROVEEDORES, PORCIONES Y BITÁCORA DE MERMAS
+           ================================================================= -->
+      <section class="erp-pane" id="pane-insumos">
+        <div class="grid-2" style="gap: 1.5rem; margin-bottom: 1.75rem;">
+          <div class="card card-white">
+            <span class="eyebrow">Control de Stock Semanal</span>
+            <h3 style="font-size: 1.25rem; font-weight: 500; margin-bottom: 0.85rem;">Inventario de Insumos y Calendario de Compras</h3>
+            <div style="overflow-x: auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Insumo Base</th>
+                    <th>Existencia</th>
+                    <th>Frecuencia / Proveedor</th>
+                    <th>Ajustar</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card card-white">
+            <span class="eyebrow">Control de Merma (Cierre 21:00)</span>
+            <h3 style="font-size: 1.25rem; font-weight: 500; margin-bottom: 0.45rem;">Bitácora de Merma: Qué se tiró y por qué</h3>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Todo insumo refrigerado lleva etiqueta de fecha y hora (sistema PEPS: primero en entrar, primero en salir).
+            </p>
+            <form id="waste-form" style="margin-bottom: 1.15rem;">
+              <div class="grid-2" style="gap: 0.6rem;">
+                <div class="form-group">
+                  <input type="text" id="waste-item" class="form-input" placeholder="Insumo / Producto (ej. 2 Baguettes)" required />
+                </div>
+                <div class="form-group">
+                  <input type="number" id="waste-cost" class="form-input" placeholder="Costo estimado ($)" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <input type="text" id="waste-reason" class="form-input" placeholder="Motivo (ej. Fin de turno / Prueba)" required />
+              </div>
+              <button type="submit" class="btn btn-outline" style="width: 100%;">Registrar Merma</button>
+            </form>
+            <div id="waste-list-container"></div>
+          </div>
+        </div>
+
+        <div class="card card-white">
+          <span class="eyebrow">Recetario y Costeo Oficial (Regla: Ningún producto supera 40% de costo)</span>
+          <h3 style="font-size: 1.25rem; font-weight: 500; margin-bottom: 0.85rem;">Matriz de Productos, Gramajes, Costo de Insumos y Margen</h3>
+          <div style="overflow-x: auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Momento</th>
+                  <th>Porción Estándar Obligatoria</th>
+                  <th>Precio Venta</th>
+                  <th>Costo Insumo+Empaque</th>
+                  <th>Margen Bruto</th>
+                </tr>
+              </thead>
+              <tbody id="recipes-cost-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           MODAL: REGISTRO MANUAL DE PEDIDO DE APP (UBER EATS / RAPPI / DIDI FOOD)
+           ================================================================= -->
+      <div class="app-order-modal-backdrop" id="app-order-modal">
+        <div class="app-order-modal-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+            <div>
+              <span class="eyebrow">Integración Operativa</span>
+              <h3 style="font-size:1.3rem; font-weight:600; color:var(--forest-dark); margin:0;">+ Registrar Pedido de App</h3>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" id="close-app-modal-btn" style="font-size:1.1rem; padding:0.2rem 0.6rem;">✕</button>
+          </div>
+          <form id="app-order-form">
+            <div class="grid-2" style="gap:0.85rem; margin-bottom:1rem;">
+              <div class="form-group">
+                <label class="form-label" for="app-select-platform">Plataforma</label>
+                <select id="app-select-platform" class="form-select" required>
+                  <option value="Uber Eats">Uber Eats (Comisión ~28%)</option>
+                  <option value="Rappi">Rappi (Comisión ~28%)</option>
+                  <option value="DiDi Food">DiDi Food (Comisión ~24%)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="app-order-code">Código de Orden / PIN Repartidor</label>
+                <input type="text" id="app-order-code" class="form-input" placeholder="Ej: UB-9142 o PIN #4810" required />
+              </div>
+            </div>
+            <div class="grid-2" style="gap:0.85rem; margin-bottom:1rem;">
+              <div class="form-group">
+                <label class="form-label" for="app-customer-name">Nombre Cliente en App</label>
+                <input type="text" id="app-customer-name" class="form-input" placeholder="Ej: Patricia M." required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="app-order-total">Total Cobrado en App ($ MXN)</label>
+                <input type="number" id="app-order-total" class="form-input" placeholder="Ej: 145" required />
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:1rem;">
+              <label class="form-label" for="app-order-dish">Platillo Principal a Preparar</label>
+              <select id="app-order-dish" class="form-select" required>
+                <option value="bag-milanesa">Baguette Milanesa de Pollo ($99)</option>
+                <option value="bag-pechuga">Baguette Pechuga a las Hierbas ($89)</option>
+                <option value="sand-jamon-pavo">Sándwich Jamón de Pavo ($65)</option>
+                <option value="combo-amanecer-atoyac">Combo Amanecer Atoyac ($94)</option>
+                <option value="combo-mediodia">Combo Mediodía Baguette + Bebida ($109)</option>
+                <option value="crepa-pavo">Crepa Salada Pechuga y Gouda ($79)</option>
+                <option value="crepa-nutella">Crepa Dulce Nutella y Plátano ($69)</option>
+                <option value="jugo-verde">Jugo Verde 500 ml ($45)</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:1.5rem;">
+              <label class="form-label" for="app-order-notes">Instrucciones de Empaque / Notas de Cocina</label>
+              <input type="text" id="app-order-notes" class="form-input" placeholder="Ej: Empaque térmico sellado · Servilletas extra" />
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+              <button type="button" class="btn btn-ghost" id="cancel-app-modal-btn">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Enviar a Cocina (KDS) →</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script type="module">
+    import { MENU_ITEMS, MOMENTS, AtoyacStore, formatMXN } from './js/store.js';
+
+    /* ======================================================================
+       1. LOGIN GATE AUTHENTICATION
+       ====================================================================== */
+    const loginGate = document.getElementById('login-gate');
+    const loginForm = document.getElementById('login-form');
+    const loginUser = document.getElementById('login-user');
+    const loginPass = document.getElementById('login-pass');
+    const loginError = document.getElementById('login-error');
+    const userRoleLabel = document.getElementById('current-user-role');
+
+    const VALID_USERS = {
+      'admin@atoyac.mx': { pass: 'atoyac2026', role: 'DIRECCIÓN GENERAL', defaultPane: 'web0' },
+      'caja@atoyac.mx': { pass: 'caja1400', role: 'CAJA & TURNO', defaultPane: 'pos' },
+      'cocina@atoyac.mx': { pass: 'barra289', role: 'BARRA & COCINA', defaultPane: 'kds' }
+    };
+
+    if (sessionStorage.getItem('atoyac_auth_role')) {
+      loginGate.classList.add('authenticated');
+      userRoleLabel.textContent = sessionStorage.getItem('atoyac_auth_role');
+    }
+
+    document.querySelectorAll('.role-pill-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.role-pill-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        loginUser.value = btn.dataset.user;
+        loginPass.value = btn.dataset.pass;
+        loginError.style.display = 'none';
+      });
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const u = loginUser.value.trim().toLowerCase();
+      const p = loginPass.value.trim();
+      if (VALID_USERS[u] && VALID_USERS[u].pass === p) {
+        sessionStorage.setItem('atoyac_auth_role', VALID_USERS[u].role);
+        userRoleLabel.textContent = VALID_USERS[u].role;
+        loginGate.classList.add('authenticated');
+        loginError.style.display = 'none';
+        switchPane(VALID_USERS[u].defaultPane);
+      } else {
+        loginError.style.display = 'block';
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      sessionStorage.removeItem('atoyac_auth_role');
+      loginGate.classList.remove('authenticated');
+    });
+
+    /* ======================================================================
+       2. SIDEBAR PANE NAVIGATION
+       ====================================================================== */
+    const navBtns = document.querySelectorAll('.erp-nav-btn');
+    const panes = document.querySelectorAll('.erp-pane');
+    const pageTitle = document.getElementById('erp-page-title');
+
+    const PANE_TITLES = {
+      web0: 'Dashboard de Pedidos Web (0% Comisiones), Pick-up y Delivery',
+      kds: 'Monitor de Cocina y Preparación en Barra (KDS)',
+      pos: 'Punto de Venta en Caja y Cortes de Turno (14:00 y 21:00)',
+      finanzas: 'Finanzas, Punto de Equilibrio (31/40) y Simulador de Socios',
+      rrhh: 'Recursos Humanos, Turnos, Nómina y Checklists por Hora',
+      sucursal: 'Datos de la Sucursal Av. Popocatépetl 289, Contrato y Equipo',
+      insumos: 'Insumos, Calendario de Compras, Recetario y Control de Merma'
+    };
+
+    function switchPane(paneId) {
+      navBtns.forEach(b => b.classList.toggle('active', b.dataset.pane === paneId));
+      panes.forEach(p => p.classList.toggle('active', p.id === `pane-${paneId}`));
+      if (PANE_TITLES[paneId]) pageTitle.textContent = PANE_TITLES[paneId];
+    }
+
+    navBtns.forEach(btn => {
+      btn.addEventListener('click', () => switchPane(btn.dataset.pane));
+    });
+
+    const hash = window.location.hash.replace('#', '');
+    if (hash === 'admin') switchPane('finanzas');
+    else if (PANE_TITLES[hash]) switchPane(hash);
+
+    /* Helper para Insignias de Origen de Pedido */
+    function getSourceBadge(source) {
+      if (source === 'Uber Eats') return '<span class="badge badge-uber">Uber Eats</span>';
+      if (source === 'Rappi') return '<span class="badge badge-rappi">Rappi</span>';
+      if (source === 'DiDi Food') return '<span class="badge badge-didi">DiDi Food</span>';
+      if (source === 'Delivery Web') return '<span class="badge badge-web">Delivery Web (0%)</span>';
+      if (source === 'Kiosco iPad') return '<span class="badge badge-kiosk">Kiosco iPad</span>';
+      return '<span class="badge badge-pos">Mostrador POS</span>';
+    }
+
+    /* ======================================================================
+       3. RENDER MÓDULO 1: CANALES DIGITALES (WEB 0% + APPS: UBER/RAPPI/DIDI)
+       ====================================================================== */
+    function renderWebZeroDashboard() {
+      const orders = AtoyacStore.getOrders();
+      const webOrders = orders.filter(o => o.source === 'Delivery Web');
+      const ipadOrders = orders.filter(o => o.source === 'Kiosco iPad');
+      const posOrders = orders.filter(o => o.source === 'Mostrador POS');
+      const uberOrders = orders.filter(o => o.source === 'Uber Eats');
+      const rappiOrders = orders.filter(o => o.source === 'Rappi');
+      const didiOrders = orders.filter(o => o.source === 'DiDi Food');
+      const appOrders = [...uberOrders, ...rappiOrders, ...didiOrders];
+
+      const pickupWeb = webOrders.filter(o => (o.orderType || '').toLowerCase().includes('pick-up'));
+      const deliveryWeb = webOrders.filter(o => !(o.orderType || '').toLowerCase().includes('pick-up'));
+
+      const directOrders = [...webOrders, ...ipadOrders, ...posOrders];
+      const directRevenue = directOrders.reduce((s, o) => s + o.total, 0);
+      const appGrossRevenue = appOrders.reduce((s, o) => s + o.total, 0);
+      const appNetRevenue = appOrders.reduce((s, o) => s + (o.netRevenue || Math.round(o.total * 0.73)), 0);
+      const appCommissionsTotal = appGrossRevenue - appNetRevenue;
+      const savedCommissionsDirect = Math.round(directRevenue * 0.28);
+
+      document.getElementById('nav-count-web').textContent = webOrders.length + appOrders.length;
+      document.getElementById('web-kpi-count').textContent = `${webOrders.length + ipadOrders.length} órdenes`;
+      document.getElementById('web-kpi-Split').textContent = `${webOrders.length} Web (${pickupWeb.length} Pick-up) · ${ipadOrders.length} iPad`;
+      document.getElementById('apps-kpi-count').textContent = `${appOrders.length} órdenes`;
+      document.getElementById('apps-kpi-breakdown').textContent = `${uberOrders.length} Uber · ${rappiOrders.length} Rappi · ${didiOrders.length} DiDi`;
+      document.getElementById('apps-kpi-gross').textContent = formatMXN(appGrossRevenue);
+      document.getElementById('apps-kpi-net').textContent = `Neto: ${formatMXN(appNetRevenue)} (Comisión -$${formatMXN(appCommissionsTotal)})`;
+      document.getElementById('web-kpi-saved').textContent = `+${formatMXN(savedCommissionsDirect)}`;
+
+      const totalCount = Math.max(1, orders.length);
+      const pct = (n) => Math.round((n / totalCount) * 100);
+
+      document.getElementById('channel-breakdown-bars').innerHTML = `
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.86rem; font-weight:600;">
+            <span>Sitio Web · Pick-up en Barra (0% com)</span>
+            <span>${pickupWeb.length} pedidos (${pct(pickupWeb.length)}%)</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct(pickupWeb.length)}%; background:var(--forest-dark);"></div></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.86rem; font-weight:600;">
+            <span>Sitio Web · Entrega Local Atoyac (0% com)</span>
+            <span>${deliveryWeb.length} pedidos (${pct(deliveryWeb.length)}%)</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct(deliveryWeb.length)}%; background:var(--sage-green);"></div></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.86rem; font-weight:600;">
+            <span>iPad Kiosco en Sucursal (0% com)</span>
+            <span>${ipadOrders.length} pedidos (${pct(ipadOrders.length)}%)</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct(ipadOrders.length)}%; background:var(--terracotta);"></div></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.86rem; font-weight:600;">
+            <span>Mostrador POS Directo (0% com)</span>
+            <span>${posOrders.length} pedidos (${pct(posOrders.length)}%)</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct(posOrders.length)}%; background:var(--warm-ochre);"></div></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.86rem; font-weight:600;">
+            <span style="color:#06C167;">● Uber Eats (~28% comisión)</span>
+            <span>${uberOrders.length} pedidos (${pct(uberOrders.length)}%)</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct(uberOrders.length)}%; background:#06C167;"></div></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.86rem; font-weight:600;">
+            <span style="color:#FF441F;">● Rappi Aliados (~28% comisión)</span>
+            <span>${rappiOrders.length} pedidos (${pct(rappiOrders.length)}%)</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct(rappiOrders.length)}%; background:#FF441F;"></div></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.86rem; font-weight:600;">
+            <span style="color:#FF7700;">● DiDi Food (~24% comisión)</span>
+            <span>${didiOrders.length} pedidos (${pct(didiOrders.length)}%)</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct(didiOrders.length)}%; background:#FF7700;"></div></div>
+        </div>
+      `;
+
+      document.getElementById('extras-analytics-box').innerHTML = `
+        <div class="grid-2" style="gap:0.85rem;">
+          <div style="padding:1rem; background:var(--bg-sand); border-radius:var(--radius-sm);">
+            <span style="font-size:0.75rem; color:var(--text-muted);">Ventas Brutas en Apps (Uber/Rappi/DiDi)</span>
+            <strong style="display:block; font-size:1.35rem; margin-top:0.2rem;">${formatMXN(appGrossRevenue)}</strong>
+            <span style="font-size:0.75rem; color:var(--terracotta); font-weight:500;">Comisiones retenidas: -$${formatMXN(appCommissionsTotal)}</span>
+          </div>
+          <div style="padding:1rem; background:var(--bg-sand); border-radius:var(--radius-sm);">
+            <span style="font-size:0.75rem; color:var(--text-muted);">Venta Neta Ingresada (Canal Directo 100%)</span>
+            <strong style="display:block; font-size:1.35rem; margin-top:0.2rem; color:var(--status-ok);">${formatMXN(directRevenue)}</strong>
+            <span style="font-size:0.75rem; color:var(--sage-green); font-weight:500;">$0 comisiones pagadas a intermediarios</span>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('digital-orders-tbody').innerHTML = orders.slice(0, 15).map(o => {
+        const isApp = ['Uber Eats', 'Rappi', 'DiDi Food'].includes(o.source);
+        const subInfo = o.driverPin || o.platformOrderId || '';
+        return `
+        <tr>
+          <td><strong>#${o.ticketNumber}</strong></td>
+          <td>
+            <strong>${o.customerName}</strong>
+            ${subInfo ? `<br/><span style="font-size:0.74rem; color:var(--text-muted); font-weight:600;">${subInfo}</span>` : ''}
+          </td>
+          <td>${getSourceBadge(o.source)}</td>
+          <td>${o.orderType}</td>
+          <td>${o.items.map(i => `${i.qty}x ${i.name}${i.extras?.length ? ` (+${i.extras.join(', ')})` : ''}`).join(' · ')}</td>
+          <td>
+            <strong>${formatMXN(o.total)}</strong>
+            ${isApp ? `<br/><span style="font-size:0.72rem; color:var(--terracotta);">Comisión: -$${formatMXN(o.commissionAmount || Math.round(o.total * 0.28))}</span>` : '<br/><span style="font-size:0.72rem; color:var(--status-ok);">0% comisión</span>'}
+          </td>
+          <td><span class="badge badge-live">${o.status.toUpperCase()}</span></td>
+        </tr>
+      `}).join('');
+    }
+
+    /* ======================================================================
+       4. RENDER MÓDULO 2: MONITOR DE COCINA (KDS MULTI-CANAL)
+       ====================================================================== */
+    function renderKDS() {
+      const orders = AtoyacStore.getOrders();
+      const nuevos = orders.filter(o => o.status === 'nuevo');
+      const preparando = orders.filter(o => o.status === 'preparando');
+      const listos = orders.filter(o => o.status === 'listo');
+
+      document.getElementById('col-count-nuevo').textContent = nuevos.length;
+      document.getElementById('col-count-preparando').textContent = preparando.length;
+      document.getElementById('col-count-listo').textContent = listos.length;
+      document.getElementById('nav-count-kds').textContent = nuevos.length + preparando.length;
+
+      const renderCol = (list, nextStatus, btnText, btnClass) => {
+        if (!list.length) return `<div style="padding:2rem 1rem; text-align:center; color:var(--text-muted); font-size:0.84rem;">Sin órdenes pendientes</div>`;
+        return list.map(o => {
+          const isApp = ['Uber Eats', 'Rappi', 'DiDi Food'].includes(o.source);
+          const appBorderColor = o.source === 'Uber Eats' ? '#06C167' : o.source === 'Rappi' ? '#FF441F' : '#FF7700';
+
+          return `
+          <div class="kds-ticket status-${o.status}" style="${isApp ? `box-shadow: 0 4px 14px rgba(0,0,0,0.1); border-left-width: 5px; border-left-color: ${appBorderColor};` : ''}">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem; flex-wrap:wrap; gap:0.25rem;">
+              <strong style="font-family:var(--font-display); font-size:1.05rem;">#${o.ticketNumber} · ${o.customerName}</strong>
+              ${getSourceBadge(o.source)}
+            </div>
+
+            ${isApp ? `
+              <div style="background: rgba(0,0,0,0.04); border-left: 3px solid ${appBorderColor}; padding: 0.35rem 0.55rem; margin-bottom: 0.45rem; border-radius: 4px; font-size: 0.78rem;">
+                <strong>REPARTIDOR APP:</strong> ${o.driverPin || o.platformOrderId || 'Verificar App'} · ${o.source}
+                <div style="font-size: 0.7rem; color: #555;">Empaque para llevar con sello inviolable</div>
+              </div>
+            ` : `
+              <div style="font-size:0.78rem; color:var(--sage-green); font-weight:600; margin-bottom:0.5rem;">${o.orderType} · ${o.paymentStatus}</div>
+            `}
+
+            <div style="border-top:1px dashed var(--border-subtle); border-bottom:1px dashed var(--border-subtle); padding:0.55rem 0; margin-bottom:0.65rem; font-size:0.88rem;">
+              ${o.items.map(i => {
+                const catItem = MENU_ITEMS.find(m => m.id === i.id);
+                return `
+                  <div style="margin-bottom:0.35rem;">
+                    <strong>${i.qty}x ${i.name}</strong>
+                    ${i.extras?.length ? `<div style="font-size:0.76rem; color:var(--sage-green);">+ ${i.extras.join(', ')}</div>` : ''}
+                    ${i.notes ? `<div style="font-size:0.76rem; color:var(--terracotta);">Nota: "${i.notes}"</div>` : ''}
+                    ${catItem ? `<div style="font-size:0.7rem; color:var(--text-muted);">Gramaje: ${catItem.portion}</div>` : ''}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+            <button class="btn ${btnClass} btn-sm kds-act" data-id="${o.id}" data-next="${nextStatus}" style="width:100%;">${btnText}</button>
+          </div>
+        `}).join('');
+      };
+
+      document.getElementById('kds-list-nuevo').innerHTML = renderCol(nuevos, 'preparando', 'Pasar a Plancha / Preparación →', 'btn-terracotta');
+      document.getElementById('kds-list-preparando').innerHTML = renderCol(preparando, 'listo', 'Marcar Lista en Barra →', 'btn-primary');
+      document.getElementById('kds-list-listo').innerHTML = renderCol(listos, 'entregado', 'Entregada al Cliente o Repartidor ✓', 'btn-outline');
+
+      document.querySelectorAll('.kds-act').forEach(btn => {
+        btn.addEventListener('click', () => AtoyacStore.updateOrderStatus(btn.dataset.id, btn.dataset.next));
+      });
+    }
+
+    // Simular Orden Web Directa
+    document.getElementById('demo-order-btn').addEventListener('click', () => {
+      const pick = MENU_ITEMS[Math.floor(Math.random() * 8)];
+      AtoyacStore.addOrder({
+        customerName: 'Pedido Web Directo',
+        source: 'Delivery Web',
+        orderType: 'Pick-up en Barra (Popocatépetl 289)',
+        paymentMethod: 'Tarjeta',
+        paymentStatus: 'Pagado',
+        status: 'nuevo',
+        items: [{ id: pick.id, name: pick.name, qty: 1, unitPrice: pick.price, extras: ['Aguacate extra (40g)'], notes: '' }],
+        total: pick.price + 15
+      });
+    });
+
+    // Simular Orden Entrante de Plataforma (Uber Eats / Rappi / DiDi Food)
+    const demoAppBtn = document.getElementById('demo-app-order-btn');
+    if (demoAppBtn) {
+      demoAppBtn.addEventListener('click', () => {
+        const apps = ['Uber Eats', 'Rappi', 'DiDi Food'];
+        const app = apps[Math.floor(Math.random() * apps.length)];
+        const names = ['Mariana G.', 'Patricio H.', 'Lucía R.', 'Sebastián V.', 'Camila T.', 'Alejandro B.'];
+        const cust = names[Math.floor(Math.random() * names.length)];
+        const pick = MENU_ITEMS[Math.floor(Math.random() * 8)];
+        const code = Math.floor(1000 + Math.random() * 9000);
+
+        AtoyacStore.addOrder({
+          customerName: `${cust}`,
+          source: app,
+          platformOrderId: `${app.substring(0,2).toUpperCase()}-${code}`,
+          driverPin: `PIN #${code}`,
+          orderType: 'Delivery Plataforma (Repartidor)',
+          paymentMethod: `${app} Pay`,
+          paymentStatus: 'Pagado por App',
+          status: 'nuevo',
+          items: [
+            { id: pick.id, name: pick.name, qty: 1, unitPrice: pick.price, extras: ['Empaque térmico'], notes: 'Entregar a repartidor' }
+          ],
+          total: pick.price,
+          notes: `Orden vía ${app} · Validar PIN con el repartidor`
+        });
+      });
+    }
+
+    // Modal de Registro Manual de Pedido de App
+    const appModal = document.getElementById('app-order-modal');
+    const openAppModal = () => { if (appModal) appModal.classList.add('open'); };
+    const closeAppModal = () => { if (appModal) appModal.classList.remove('open'); };
+
+    const openBtn1 = document.getElementById('open-app-modal-btn');
+    if (openBtn1) openBtn1.addEventListener('click', openAppModal);
+    const openBtn2 = document.getElementById('btn-open-app-modal-tab');
+    if (openBtn2) openBtn2.addEventListener('click', openAppModal);
+
+    const closeBtn = document.getElementById('close-app-modal-btn');
+    if (closeBtn) closeBtn.addEventListener('click', closeAppModal);
+    const cancelBtn = document.getElementById('cancel-app-modal-btn');
+    if (cancelBtn) cancelBtn.addEventListener('click', closeAppModal);
+
+    const appForm = document.getElementById('app-order-form');
+    if (appForm) {
+      appForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const platform = document.getElementById('app-select-platform').value;
+        const code = document.getElementById('app-order-code').value;
+        const customer = document.getElementById('app-customer-name').value;
+        const total = Number(document.getElementById('app-order-total').value) || 120;
+        const dishId = document.getElementById('app-order-dish').value;
+        const notes = document.getElementById('app-order-notes').value;
+
+        const foundDish = MENU_ITEMS.find(m => m.id === dishId) || MENU_ITEMS[0];
+
+        AtoyacStore.addOrder({
+          customerName: `${customer}`,
+          source: platform,
+          platformOrderId: code,
+          driverPin: code,
+          orderType: 'Delivery Plataforma (Repartidor)',
+          paymentMethod: `${platform} Pay`,
+          paymentStatus: 'Pagado por App',
+          status: 'nuevo',
+          items: [
+            { id: foundDish.id, name: foundDish.name, qty: 1, unitPrice: foundDish.price, extras: ['Empaque sellado'], notes: notes }
+          ],
+          total: total,
+          notes: notes || `Orden ${platform} · Repartidor: ${code}`
+        });
+
+        e.target.reset();
+        closeAppModal();
+        switchPane('kds');
+      });
+    }
+
+    /* ======================================================================
+       5. RENDER MÓDULO 3: CAJA REGISTRADORA (POS) & CORTES
+       ====================================================================== */
+    let posCat = 'todos';
+    let posCart = [];
+
+    function renderPOSCatalog() {
+      const items = MENU_ITEMS.filter(i => {
+        if (posCat === 'todos') return true;
+        if (posCat === 'combos') return i.isCombo;
+        return i.category === posCat;
+      });
+      const grid = document.getElementById('pos-items-grid');
+      grid.innerHTML = items.map(item => `
+        <button type="button" class="pos-item-btn" data-id="${item.id}">
+          <div>
+            <div style="font-size:0.68rem; color:var(--sage-green); font-weight:600;">${MOMENTS[item.category].name}</div>
+            <div style="font-weight:500; font-size:0.88rem; color:var(--forest-dark); margin-top:2px;">${item.name}</div>
+          </div>
+          <div style="font-family:var(--font-display); font-weight:600; font-size:1.05rem; color:var(--terracotta);">${formatMXN(item.price)}</div>
+        </button>
+      `).join('');
+
+      grid.querySelectorAll('.pos-item-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const item = MENU_ITEMS.find(m => m.id === btn.dataset.id);
+          if (!item) return;
+          const ex = posCart.find(c => c.id === item.id);
+          if (ex) ex.qty += 1;
+          else posCart.push({ id: item.id, name: item.name, qty: 1, unitPrice: item.price, extras: [], notes: '' });
+          renderPOSTicket();
+        });
+      });
+    }
+
+    function renderPOSTicket() {
+      const box = document.getElementById('pos-current-ticket');
+      const totalEl = document.getElementById('pos-ticket-total');
+      if (!posCart.length) {
+        box.innerHTML = `<div style="text-align:center; padding:1.75rem; color:var(--text-muted); font-size:0.84rem;">Toca productos a la izquierda para armar la cuenta.</div>`;
+        totalEl.textContent = '$0';
+        return;
+      }
+      box.innerHTML = posCart.map((c, idx) => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.45rem 0.65rem; background:var(--bg-sand); border-radius:var(--radius-sm); font-size:0.86rem;">
+          <span>${c.qty} × ${c.name}</span>
+          <div style="display:flex; align-items:center; gap:0.45rem;">
+            <strong>${formatMXN(c.qty * c.unitPrice)}</strong>
+            <button type="button" class="btn btn-ghost btn-sm pos-del" data-idx="${idx}" style="padding:0.1rem 0.45rem;">✕</button>
+          </div>
+        </div>
+      `).join('');
+      box.querySelectorAll('.pos-del').forEach(btn => {
+        btn.addEventListener('click', () => {
+          posCart.splice(Number(btn.dataset.idx), 1);
+          renderPOSTicket();
+        });
+      });
+      totalEl.textContent = formatMXN(posCart.reduce((s, i) => s + i.qty * i.unitPrice, 0));
+    }
+
+    document.querySelectorAll('#pos-cat-filter button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#pos-cat-filter button').forEach(b => b.className = 'btn btn-ghost btn-sm');
+        btn.className = 'btn btn-primary btn-sm';
+        posCat = btn.dataset.cat;
+        renderPOSCatalog();
+      });
+    });
+
+    document.getElementById('pos-clear-btn').addEventListener('click', () => { posCart = []; renderPOSTicket(); });
+    document.getElementById('pos-charge-btn').addEventListener('click', () => {
+      if (!posCart.length) return;
+      const total = posCart.reduce((s, i) => s + i.qty * i.unitPrice, 0);
+      AtoyacStore.addOrder({
+        customerName: document.getElementById('pos-cust-name').value.trim() || 'Cliente Mostrador',
+        source: 'Mostrador POS',
+        orderType: 'Para llevar',
+        paymentMethod: document.getElementById('pos-pay-method').value,
+        paymentStatus: 'Pagado',
+        status: 'nuevo',
+        items: posCart,
+        total
+      });
+      posCart = [];
+      document.getElementById('pos-cust-name').value = '';
+      renderPOSTicket();
+    });
+
+    function renderCashCuts() {
+      const cuts = AtoyacStore.getCashCuts();
+      const box = document.getElementById('cuts-history');
+      if (!cuts.length) {
+        box.innerHTML = `<div style="color:var(--text-muted);">Sin cortes registrados hoy.</div>`;
+        return;
+      }
+      box.innerHTML = cuts.slice(0, 3).map(c => `
+        <div style="padding:0.5rem 0.7rem; background:var(--bg-sand); border-radius:var(--radius-sm); margin-top:0.4rem;">
+          <strong>${c.shift}</strong> (${c.createdAt}) — Efectivo: ${formatMXN(c.cashCounted)} · Tarjeta: ${formatMXN(c.cardTotal)}
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('cash-cut-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      AtoyacStore.addCashCut({
+        shift: document.getElementById('cut-shift').value,
+        cashCounted: document.getElementById('cut-cash').value,
+        cardTotal: document.getElementById('cut-card').value,
+        expectedTotal: 0,
+        notes: document.getElementById('cut-notes').value
+      });
+      e.target.reset();
+      renderCashCuts();
+    });
+
+    /* ======================================================================
+       6. RENDER MÓDULO 4: FINANZAS Y SIMULADOR
+       ====================================================================== */
+    function renderFinanzas() {
+      const orders = AtoyacStore.getOrders();
+      const count = orders.length;
+      const totalSales = orders.reduce((s, o) => s + o.total, 0);
+      const avgTicket = count > 0 ? totalSales / count : 0;
+      const contribution = totalSales * (46.45 / 95);
+
+      document.getElementById('kpi-tickets-today').textContent = `${count} tickets`;
+      document.getElementById('kpi-tickets-bar').style.width = `${Math.min(100, (count / 40) * 100)}%`;
+      document.getElementById('kpi-sales-today').textContent = formatMXN(totalSales);
+      document.getElementById('kpi-avg-ticket').textContent = formatMXN(avgTicket);
+      document.getElementById('kpi-contribution-today').textContent = formatMXN(contribution);
+
+      const cAm = orders.filter(o => o.moment === 'amanecer').length;
+      const cMe = orders.filter(o => o.moment === 'mediodia').length;
+      const cTa = orders.filter(o => o.moment === 'tarde').length;
+
+      document.getElementById('mom-stat-amanecer').textContent = `${cAm} / 16 tickets (Eq: 12)`;
+      document.getElementById('mom-bar-amanecer').style.width = `${Math.min(100, (cAm / 16) * 100)}%`;
+      document.getElementById('mom-stat-mediodia').textContent = `${cMe} / 16 tickets (Eq: 13)`;
+      document.getElementById('mom-bar-mediodia').style.width = `${Math.min(100, (cMe / 16) * 100)}%`;
+      document.getElementById('mom-stat-tarde').textContent = `${cTa} / 8 tickets (Eq: 6)`;
+      document.getElementById('mom-bar-tarde').style.width = `${Math.min(100, (cTa / 8) * 100)}%`;
+
+      const phaseEl = document.getElementById('scaling-phase-indicator');
+      if (count >= 70) phaseEl.innerHTML = `<strong>Fase 3 Activable (+70 ventas/día):</strong> Contratar turno tarde y pedidos de oficinas.`;
+      else if (count >= 50) phaseEl.innerHTML = `<strong>Fase 2 Activable (+50 ventas/día):</strong> Ayudante en hora pico y segunda crepera.`;
+      else if (count >= 31) phaseEl.innerHTML = `<strong>Fase 1 Activable (+31 ventas/día):</strong> Punto de equilibrio superado.`;
+      else phaseEl.innerHTML = `<strong>Fase 0 · Arranque (${count}/31 para equilibrio):</strong> Enfoque en combos, degustación exterior y web 0% comisión.`;
+    }
+
+    function runSimulator() {
+      const dailyTickets = Number(document.getElementById('sim-input-tickets').value) || 0;
+      const avgTicket = Number(document.getElementById('sim-input-avg').value) || 95;
+      const rentNoIVA = Number(document.getElementById('sim-input-rent').value) || 16500;
+      const fixedCostsNoIVA = 20932 + rentNoIVA;
+      const unitContribution = avgTicket * (46.45 / 95);
+      const monthlyTickets = dailyTickets * 26;
+      const monthlySales = monthlyTickets * avgTicket;
+      const netBeforeISR = monthlyTickets * unitContribution - fixedCostsNoIVA;
+      const isr = netBeforeISR > 0 ? (monthlySales / 1.16) * 0.0175 : 0;
+      const netUtility = netBeforeISR - isr;
+      const breakEven = Math.ceil((fixedCostsNoIVA / unitContribution) / 26);
+      const payback = netUtility > 0 ? `${(71900 / netUtility).toFixed(1)} meses` : 'En pérdida';
+
+      document.getElementById('sim-results-box').innerHTML = `
+        <div class="grid-2" style="gap:0.65rem; font-size:0.85rem;">
+          <div>Venta Mensual c/IVA: <strong>${formatMXN(monthlySales)}</strong></div>
+          <div>Equilibrio Diario: <strong>${breakEven} tickets/día</strong></div>
+          <div>Gastos Fijos s/IVA: <strong>${formatMXN(fixedCostsNoIVA)}</strong></div>
+          <div>Retorno $71,900: <strong>${payback}</strong></div>
+        </div>
+        <div style="margin-top:0.75rem; padding-top:0.65rem; border-top:1px dashed var(--border-strong); display:flex; justify-content:space-between; align-items:center;">
+          <span>Utilidad Mensual Libre (después ISR):</span>
+          <strong style="font-size:1.35rem; color:${netUtility >= 0 ? 'var(--status-ok)' : 'var(--status-danger)'};">${formatMXN(Math.round(netUtility))}</strong>
+        </div>
+      `;
+    }
+
+    ['sim-input-tickets', 'sim-input-avg', 'sim-input-rent'].forEach(id => {
+      document.getElementById(id).addEventListener('input', runSimulator);
+    });
+
+    /* ======================================================================
+       7. RENDER MÓDULOS 5 Y 7: RRHH CHECKLISTS, INSUMOS Y RECETARIO
+       ====================================================================== */
+    function renderChecklists() {
+      const lists = AtoyacStore.getChecklists();
+      const box = document.getElementById('checklists-container');
+      box.innerHTML = Object.entries(lists).map(([key, group]) => {
+        const done = group.items.filter(i => i.done).length;
+        return `
+          <div class="card card-white">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.65rem;">
+              <strong style="font-size:0.96rem;">${group.title}</strong>
+              <span class="badge ${done === group.items.length ? 'badge-live' : 'badge-amanecer'}">${done}/${group.items.length}</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.45rem;">
+              ${group.items.map(item => `
+                <label style="display:flex; align-items:flex-start; gap:0.45rem; font-size:0.82rem; cursor:pointer; ${item.done ? 'text-decoration:line-through; opacity:0.6;' : ''}">
+                  <input type="checkbox" class="chk-item" data-g="${key}" data-id="${item.id}" ${item.done ? 'checked' : ''} style="margin-top:3px;" />
+                  <span>${item.text}</span>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      box.querySelectorAll('.chk-item').forEach(chk => {
+        chk.addEventListener('change', () => AtoyacStore.toggleChecklistItem(chk.dataset.g, chk.dataset.id));
+      });
+    }
+
+    function renderInsumosAndRecipes() {
+      const inv = AtoyacStore.getInventory();
+      const tbody = document.getElementById('inventory-tbody');
+      tbody.innerHTML = inv.map(item => `
+        <tr>
+          <td><strong>${item.name}</strong></td>
+          <td><strong>${item.stock} ${item.unit}</strong> <span style="font-size:0.74rem; color:var(--text-muted);">(Mín: ${item.minStock})</span></td>
+          <td style="font-size:0.8rem; color:var(--text-muted);">${item.frequency}</td>
+          <td>
+            <button class="btn btn-ghost btn-sm inv-btn" data-id="${item.id}" data-d="-1" style="padding:0.15rem 0.5rem;">−</button>
+            <button class="btn btn-ghost btn-sm inv-btn" data-id="${item.id}" data-d="1" style="padding:0.15rem 0.5rem;">+</button>
+          </td>
+        </tr>
+      `).join('');
+
+      tbody.querySelectorAll('.inv-btn').forEach(btn => {
+        btn.addEventListener('click', () => AtoyacStore.updateInventoryStock(btn.dataset.id, Number(btn.dataset.d)));
+      });
+
+      const logs = AtoyacStore.getWasteLogs();
+      document.getElementById('waste-list-container').innerHTML = logs.map(l => `
+        <div style="padding:0.45rem 0.7rem; background:var(--bg-sand); border-radius:var(--radius-sm); font-size:0.8rem; margin-top:0.35rem; display:flex; justify-content:space-between;">
+          <span><strong>${l.item}</strong> — ${l.reason} (${l.time})</span>
+          <strong>${formatMXN(l.cost)}</strong>
+        </div>
+      `).join('');
+
+      document.getElementById('recipes-cost-tbody').innerHTML = MENU_ITEMS.map(m => `
+        <tr>
+          <td><strong>${m.name}</strong></td>
+          <td><span class="badge ${MOMENTS[m.category].badgeClass}">${MOMENTS[m.category].name}</span></td>
+          <td style="font-size:0.82rem;">${m.portion}</td>
+          <td><strong>${formatMXN(m.price)}</strong></td>
+          <td>${formatMXN(m.cost)}</td>
+          <td><span class="badge badge-live">${m.margin}%</span></td>
+        </tr>
+      `).join('');
+    }
+
+    document.getElementById('waste-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      AtoyacStore.addWasteLog({
+        item: document.getElementById('waste-item').value,
+        cost: document.getElementById('waste-cost').value,
+        reason: document.getElementById('waste-reason').value
+      });
+      e.target.reset();
+    });
+
+    document.getElementById('sim-34-btn').addEventListener('click', () => AtoyacStore.simulateDemoDay(34));
+    document.getElementById('sim-42-btn').addEventListener('click', () => AtoyacStore.simulateDemoDay(42));
+    document.getElementById('reset-seed-btn').addEventListener('click', () => AtoyacStore.resetToSeed());
+
+    function refreshAll() {
+      renderWebZeroDashboard();
+      renderKDS();
+      renderCashCuts();
+      renderFinanzas();
+      renderChecklists();
+      renderInsumosAndRecipes();
+    }
+
+    renderPOSCatalog();
+    renderPOSTicket();
+    runSimulator();
+    refreshAll();
+
+    AtoyacStore.subscribe(() => refreshAll());
+  </script>
+</body>
+</html>
