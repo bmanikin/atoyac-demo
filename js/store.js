@@ -7,7 +7,7 @@ export const BUSINESS_INFO = {
   tagline: "ALL-DAY HEALTHY KITCHEN",
   address: "Av. Popocatépetl 289, Local A · Santa Cruz Atoyac, CDMX",
   reference: "Eje 8 Sur, cerca de Av. México-Coyoacán y Uxmal",
-  hours: "Lunes a Sábado · 7:00 a 21:00",
+  hours: "Lunes a Sábado · 7:00 a 19:00 (Domingo cerrado)",
   openingDate: "5 de noviembre de 2026",
   phone: "525532713451", // Configurable en Admin
   financials: {
@@ -110,9 +110,9 @@ export const MOMENTS = {
   tarde: {
     id: "tarde",
     name: "Tarde",
-    hours: "16:30 – 21:00",
+    hours: "16:30 – 19:00",
     startHour: 16.5,
-    endHour: 21,
+    endHour: 19,
     badgeClass: "badge-tarde",
     targetTickets: 8,
     breakEvenTickets: 6,
@@ -121,9 +121,9 @@ export const MOMENTS = {
   bebidas: {
     id: "bebidas",
     name: "Para Tomar",
-    hours: "Todo el día (7:00 – 21:00)",
+    hours: "Todo el día (7:00 – 19:00)",
     startHour: 7,
-    endHour: 21,
+    endHour: 19,
     badgeClass: "badge-bebidas",
     targetTickets: 0,
     breakEvenTickets: 0,
@@ -937,7 +937,7 @@ export function getActiveMomentByClock() {
   const hr = now.getHours() + now.getMinutes() / 60;
   if (hr >= 7 && hr < 11.5) return MOMENTS.amanecer;
   if (hr >= 11.5 && hr < 16.5) return MOMENTS.mediodia;
-  if (hr >= 16.5 && hr <= 21.5) return MOMENTS.tarde;
+  if (hr >= 16.5 && hr <= 19.5) return MOMENTS.tarde;
   return MOMENTS.amanecer; // Por defecto muestra Amanecer fuera de horario
 }
 
