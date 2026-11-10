@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catálogo Completo de Productos | ATOYAC · All-Day Healthy Kitchen</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: var(--bg-cream);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 2rem;
+    }
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .filter-pill {
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-white);
+      font-weight: 600;
+      font-size: 0.86rem;
+      cursor: pointer;
+      color: var(--forest-dark);
+      transition: all 0.2s;
+    }
+    .filter-pill.active, .filter-pill:hover {
+      background: var(--forest-dark);
+      color: var(--bg-sand);
+      border-color: var(--forest-dark);
+    }
+    .product-catalog-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .product-catalog-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .product-catalog-card.is-combo {
+      background: linear-gradient(180deg, #FDF8F5 0%, #FFFFFF 100%);
+      border: 1.5px solid var(--terracotta);
+    }
+    .portion-box {
+      background: var(--bg-sand);
+      padding: 0.6rem 0.8rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      color: var(--forest-dark);
+      border-left: 3px solid var(--sage-green);
+    }
+    .mobile-text { display: none; }
+    @media (max-width: 768px) {
+      .navbar-inner {
+        height: 64px !important;
+        padding: 0 1.25rem !important;
+      }
+      .brand-title {
+        font-size: 1.2rem !important;
+      }
+      .nav-links {
+        display: none !important;
+      }
+      .desktop-text {
+        display: none !important;
+      }
+      .mobile-text {
+        display: inline !important;
+      }
+      .nav-actions .btn {
+        padding: 0.45rem 0.95rem !important;
+        font-size: 0.82rem !important;
+        white-space: nowrap !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MINIMAL NAVBAR -->
+  <header class="navbar" style="background: rgba(239, 236, 230, 0.96); border-bottom: 1px solid rgba(37, 51, 41, 0.08);">
+    <div class="container navbar-inner" style="height: 84px;">
+      <a href="/" class="brand-logo" style="gap: 0.65rem;">
+        <img src="assets/img/logo.svg" alt="ATOYAC Logo" style="height: 38px; width: auto;" />
+        <div class="brand-text-wrap">
+          <span class="brand-title">ATOYAC</span>
+        </div>
+      </a>
+
+      <ul class="nav-links" style="gap: 2.25rem;">
+        <li><a href="/" class="nav-link" style="background: transparent; color: var(--text-muted);">Inicio</a></li>
+        <li><a href="menu.html" class="nav-link active" style="background: transparent; color: var(--forest-dark); border-bottom: 1.5px solid var(--forest-dark); border-radius: 0;">Menú</a></li>
+        <li><a href="nosotros.html" class="nav-link" style="background: transparent; color: var(--text-muted);">Nosotros</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="delivery.html" class="btn btn-outline btn-sm">
+          <span class="desktop-text">Entrega a tu Domicilio</span>
+          <span class="mobile-text">Pedir en Línea</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section" style="padding-top: 2.5rem;">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Menú Completo · Transparencia de Ingredientes</span>
+        <h1 class="section-title">Todos los productos, combos, extras y porciones estándar.</h1>
+        <p class="section-subtitle">
+          Misma porción siempre: así el sabor y la frescura nunca cambian. Consulta aquí nuestro catálogo completo de Amanecer, Mediodía, Tarde y Para Tomar.
+        </p>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <div class="filter-pills" id="category-filters">
+          <button class="filter-pill active" data-cat="todos">Todos los Productos (18)</button>
+          <button class="filter-pill" data-cat="combos">Combos Ahorro</button>
+          <button class="filter-pill" data-cat="amanecer">Amanecer (7:00–11:30)</button>
+          <button class="filter-pill" data-cat="mediodia">Mediodía (11:30–16:30)</button>
+          <button class="filter-pill" data-cat="tarde">Tarde (16:30–21:00)</button>
+          <button class="filter-pill" data-cat="bebidas">Para Tomar (Todo el día)</button>
+        </div>
+
+        <div style="min-width: 240px;">
+          <input type="search" id="search-input" class="form-input" placeholder="Buscar producto o ingrediente..." style="width: 100%;" />
+        </div>
+      </div>
+
+      <!-- CATALOG GRID -->
+      <div class="grid-3" id="catalog-grid"></div>
+
+      <!-- EXTRAS & PORCIONES ESTÁNDAR TABLE -->
+      <section style="margin-top: 4rem;">
+        <div class="section-header">
+          <span class="eyebrow">Manual de Barra · Estándar de Calidad</span>
+          <h2 class="section-title" style="font-size: 1.85rem;">Tabla de Porciones Estándar y Extras</h2>
+          <p class="section-subtitle">Cada platillo se prepara al momento respetando nuestro gramaje exacto.</p>
+        </div>
+
+        <div class="grid-2" style="align-items: start; gap: 2rem;">
+          <div style="overflow-x: auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Porción Estándar en Barra</th>
+                  <th>Precio Local</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Sándwiches (Pollo, Fajitas de Res, Huevo)</strong></td>
+                  <td>2 rebanadas pan artesanal · 80 g proteína a la plancha · lechuga y aderezo</td>
+                  <td><strong>$48</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Chapata de Pollo</strong></td>
+                  <td>Chapata rústica artesanal · 90 g pechuga de pollo a la plancha · vegetales</td>
+                  <td><strong>$59</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Chapatas (Fajitas de Res, Huevo)</strong></td>
+                  <td>Chapata rústica artesanal · 80 g proteína · vegetales frescos</td>
+                  <td><strong>$48</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Baguettes (Pollo, Fajitas de Res, Huevo)</strong></td>
+                  <td>Baguette artesanal 25 cm · 80 g proteína a la plancha · vegetales frescos</td>
+                  <td><strong>$48</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Bowls de Ensalada (Pollo, Res, Huevo)</strong></td>
+                  <td>Bowl 350 g · Hojas verdes mixtas · vegetales y aderezo artesanal</td>
+                  <td><strong>$48</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Combo Desayuno</strong></td>
+                  <td>1 Sándwich o Chapata a elegir + 1 Café americano caliente de grano</td>
+                  <td><strong>$65</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Combo Comida</strong></td>
+                  <td>1 Baguette artesanal a elegir + 1 Bebida (Café o Agua medio litro)</td>
+                  <td><strong>$75</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Café Americano de Grano</strong></td>
+                  <td>Café de especialidad mexicano recién tostado y colado (12 oz)</td>
+                  <td><strong>$25</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Agua Medio Litro (500 ml)</strong></td>
+                  <td>Agua purificada embotellada 500 ml fría</td>
+                  <td><strong>$35</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card card-white">
+            <span class="eyebrow">Personaliza tu Orden</span>
+            <h3 style="font-size: 1.35rem; margin-bottom: 1rem;">Extras Disponibles</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div class="menu-item-row" style="padding: 0.6rem 0;">
+                <div>
+                  <div class="menu-item-name">Aguacate Hass Extra (40 g)</div>
+                  <div class="menu-item-desc">Ideal para sándwiches, baguettes o crepa salada</div>
+                </div>
+                <div class="menu-item-price">+$15</div>
+              </div>
+              <div class="menu-item-row" style="padding: 0.6rem 0;">
+                <div>
+                  <div class="menu-item-name">Doble Proteína</div>
+                  <div class="menu-item-desc">Porción extra de pechuga, pavo o milanesa</div>
+                </div>
+                <div class="menu-item-price">+$20</div>
+              </div>
+              <div class="menu-item-row" style="padding: 0.6rem 0;">
+                <div>
+                  <div class="menu-item-name">Cambio a Pan Integral</div>
+                  <div class="menu-item-desc">Sin costo adicional en todos los sándwiches</div>
+                </div>
+                <div class="menu-item-price" style="color: var(--status-ok);">$0</div>
+              </div>
+              <div class="menu-item-row" style="padding: 0.6rem 0;">
+                <div>
+                  <div class="menu-item-name">Plátano o Fresa Extra</div>
+                  <div class="menu-item-desc">Fruta fresca adicional para tus crepas</div>
+                </div>
+                <div class="menu-item-price">+$15</div>
+              </div>
+              <div class="menu-item-row" style="padding: 0.6rem 0;">
+                <div>
+                  <div class="menu-item-name">Doble Nutella (35 g extra)</div>
+                  <div class="menu-item-desc">Para amantes del chocolate avellana</div>
+                </div>
+                <div class="menu-item-price">+$15</div>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <a href="kiosco.html" class="btn btn-primary" style="flex: 1;">Pedir en Kiosco iPad</a>
+              <a href="delivery.html" class="btn btn-terracotta" style="flex: 1;">Pedir en Delivery</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module">
+    import { MENU_ITEMS, MOMENTS, formatMXN } from './js/store.js';
+
+    const grid = document.getElementById('catalog-grid');
+    const searchInput = document.getElementById('search-input');
+    const filterButtons = document.querySelectorAll('#category-filters .filter-pill');
+
+    let currentCategory = 'todos';
+    let searchQuery = '';
+
+    function renderCatalog() {
+      const filtered = MENU_ITEMS.filter(item => {
+        const matchesCat =
+          currentCategory === 'todos' ||
+          (currentCategory === 'combos' && item.isCombo) ||
+          item.category === currentCategory;
+
+        const q = searchQuery.trim().toLowerCase();
+        const matchesSearch =
+          !q ||
+          item.name.toLowerCase().includes(q) ||
+          item.desc.toLowerCase().includes(q) ||
+          item.portion.toLowerCase().includes(q);
+
+        return matchesCat && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">No encontramos productos con ese filtro.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => {
+        const momentInfo = MOMENTS[item.category];
+        return `
+          <article class="product-catalog-card ${item.isCombo ? 'is-combo' : ''}" style="padding: 0; overflow: hidden;">
+            <div style="width: 100%; height: 175px; overflow: hidden; background: var(--bg-sand);">
+              <img src="${item.image}" alt="${item.name}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+            </div>
+            <div style="padding: 1.35rem; display: flex; flex-direction: column; justify-content: space-between; flex: 1; gap: 1rem;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                  <span class="badge ${momentInfo.badgeClass}">${momentInfo.name} · ${momentInfo.hours}</span>
+                  ${item.isCombo ? '<span class="badge" style="background: var(--terracotta); color: #fff;">COMBO AHORRO</span>' : ''}
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem;">
+                  <h3 style="font-size: 1.18rem; font-weight: 500; color: var(--forest-dark);">${item.name}</h3>
+                  <div style="text-align: right;">
+                    <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; color: var(--forest-dark);">${formatMXN(item.price)}</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);">IVA incluido</div>
+                  </div>
+                </div>
+
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0.5rem 0 0.85rem;">${item.desc}</p>
+
+                <div class="portion-box">
+                  <strong>Porción estándar:</strong> ${item.portion}
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.75rem; border-top: 1px dashed var(--border-subtle);">
+                <span style="font-size: 0.78rem; color: var(--text-muted);">Prep: ~${item.prepTimeMin} min</span>
+                <div style="display: flex; gap: 0.45rem;">
+                  <a href="kiosco.html?add=${item.id}" class="btn btn-ghost btn-sm">+ Kiosco</a>
+                  <a href="delivery.html?add=${item.id}" class="btn btn-primary btn-sm">Pedir →</a>
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCategory = btn.dataset.cat;
+        renderCatalog();
+      });
+    });
+
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderCatalog();
+    });
+
+    renderCatalog();
+  </script>
+</body>
+</html>
